@@ -62,3 +62,8 @@ footnotereturnlinkcontents = "↩"
     name = "关于"
     url = "/page/about/"
     weight = 4
+    
+[[menu.main]]
+    name = "我是谁?"
+    url = "/page/me/"
+    weight = 5
