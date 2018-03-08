@@ -9,6 +9,7 @@ tags:
   - R markdown
   - Rstudio
   - shortcut
+description: '一键在手，天下我有'
 ---
 
 快捷键可以提高工作的效率，上回简单介绍了一下再R中使用的快捷键，点击[Rstudio快捷键](https://ditannan.github.io/2018/02/27/Rstudio-%E5%BF%AB%E6%8D%B7%E9%94%AE/)查看。

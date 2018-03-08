@@ -9,6 +9,7 @@ tags:
   - R tips
   - 数据框
 toc: yes
+description: '向量与数据框更配哦'
 ---
 
 ## 前言

@@ -10,6 +10,7 @@ tags:
   - R
   - regression
 mathjax: yes
+description: '重学线性回归'
 ---
 
 原书地址：[An Introduction to Statistical Learning: with Applications in R](http://www-bcf.usc.edu/~gareth/ISL/)
