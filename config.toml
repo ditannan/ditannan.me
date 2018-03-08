@@ -1,5 +1,5 @@
-baseurl = "https://example.com/"
-title = "Ghostwriter example"
+baseurl = "https://ditannan.netlify.com/"
+title = "以梦为马，不负韶华"
 theme = "ghostwriter"
 languageCode = "en-us"
 copyright = "My Name"
@@ -15,8 +15,8 @@ googleAnalytics = "XXX"
 
 [Params]
     intro = true
-    headline = "Ghostwriter example"
-    description = "Ghostwriter example description"
+    headline = "低碳南"
+    description = "For you and future me"
     github = "https://github.com/XXX"
     gitlab = "https://gitlab.com/XXX"
     linkedin = "https://linkedin.com/in/XXX/"
@@ -37,7 +37,7 @@ googleAnalytics = "XXX"
     post = "/:year/:month/:day/:filename/"
 
 [[menu.main]]
-    name = "Blog"
+    name = "主页"
     url = "/"
     weight = 1
 
@@ -52,6 +52,6 @@ googleAnalytics = "XXX"
     weight = 3
 
 [[menu.main]]
-    name = "About"
+    name = "关于"
     url = "/page/about/"
     weight = 4
