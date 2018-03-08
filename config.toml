@@ -1,4 +1,4 @@
-baseurl = "https://ditannan.netlify.com/"
+baseurl = "ditannan.me"
 title = "以梦为马，不负韶华"
 theme = "ghostwriter"
 languageCode = "zh-Hans"
@@ -7,7 +7,7 @@ disqusShortname = "XXX"
 googleAnalytics = "XXX"
 relativeURLs = true
 enableEmoji = true
-#ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 hasCJKLanguage = true
 
 [Author]
