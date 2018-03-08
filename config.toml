@@ -1,14 +1,18 @@
 baseurl = "https://ditannan.netlify.com/"
 title = "以梦为马，不负韶华"
 theme = "ghostwriter"
-languageCode = "en-us"
+languageCode = "zh-Hans"
 copyright = "My Name"
 disqusShortname = "XXX"
 googleAnalytics = "XXX"
+relativeURLs = true
+enableEmoji = true
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+hasCJKLanguage = true
 
 [Author]
-    name = "My Name"
-    profile = "https://google.com/+XXX"
+    name = "低碳南"
+    profile = "https://www.facebook.com/zhimeng.xu.967"
 
 [Taxonomies]
     tag = "tags"
@@ -17,24 +21,24 @@ googleAnalytics = "XXX"
     intro = true
     headline = "低碳南"
     description = "For you and future me"
-    github = "https://github.com/XXX"
-    gitlab = "https://gitlab.com/XXX"
-    linkedin = "https://linkedin.com/in/XXX/"
-    gplus = "https://google.com/+XXX"
-    twitter = "https://twitter.com/XXX"
-    stackoverflow = "https://stackoverflow.com/users/XXX/YYY"
-    email = "XXX@example.com"
+    github = "https://github.com/ditannan"
+    #gitlab = "https://gitlab.com/XXX"
+    #linkedin = "https://linkedin.com/in/XXX/"
+    #gplus = "https://google.com/+XXX"
+    twitter = "https://twitter.com/xu_zhimeng"
+    stackoverflow = "https://stackoverflow.com/users/8794908/zhimeng-xu"
+    email = "xzm9210@gmail.com"
     opengraph = true
     shareTwitter = true
     shareFacebook = true
-    shareGooglePlus = true
+    shareGooglePlus = false
     shareLinkedIn = false
-    dateFormat = "Mon, Jan 2, 2006"
+    dateFormat = "2006/01/02"
     highlightJsUrl = ""
     highlightJsLocalUrl = ""
 
 [Permalinks]
-    post = "/:year/:month/:day/:filename/"
+    post = "/:year/:month/:day/:slug/"
 
 [[menu.main]]
     name = "主页"
@@ -42,13 +46,13 @@ googleAnalytics = "XXX"
     weight = 1
 
 [[menu.main]]
-    name = "Projects"
+    name = "学习中"
     url = "/project/"
     weight = 2
 
 [[menu.main]]
-    name = "Contact"
-    url = "/page/contact/"
+    name = "杂记"
+    url = "/something/"
     weight = 3
 
 [[menu.main]]

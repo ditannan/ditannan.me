@@ -1,0 +1,966 @@
+---
+title: ISLR之线性回归
+author: Delta
+date: '2018-02-28'
+categories:
+  - 读书笔记
+tags:
+  - ISLR
+  - linear regression
+  - R
+  - regression
+mathjax: yes
+toc: yes
+---
+
+
+<div id="TOC">
+true
+</div>
+
+<p>原书地址：<a href="http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning: with Applications in R</a></p>
+<p>本文源文件下载：<a href="https://github.com/ditannan/learn_ML/blob/ISLR/ISLR/Chapter%203%20Linear%20Regression.ipynb">Chapter 3 Linear Regression</a></p>
+<div class="section level2">
+<h2>简单线性回归</h2>
+<p>简单的线性回归，里面的知识点确并不是想象中的那么简单。。。</p>
+<p><span class="math display">\[Y\approx\beta_0+\beta_1X\]</span> <span class="math display">\[\hat{y}=\hat{\beta_0}+\hat{\beta_1}x\]</span></p>
+<hr />
+<!-- more-->
+<div class="section level3">
+<h3>估计系数</h3>
+<p>最小二乘估计。</p>
+</div>
+<div class="section level3">
+<h3>评估系数估计准确性</h3>
+<p>标准误差(standard error, <span class="math inline">\(SE(\hat{\mu})\)</span>)，可用于计算置信区间。</p>
+</div>
+<div class="section level3">
+<h3>评价模型准确性</h3>
+<p>残差标准误RSE、<span class="math inline">\(R^2\)</span>。</p>
+</div>
+</div>
+<div class="section level2">
+<h2>多元线性回归</h2>
+<p>多个预测变量。</p>
+</div>
+<div class="section level2">
+<h2>注意事项</h2>
+<div class="section level3">
+<h3>定性预测变量</h3>
+<p>哑元化。</p>
+</div>
+<div class="section level3">
+<h3>线性模型扩展</h3>
+<ul>
+<li>去除可加性假设：添加交互项。<br />
+</li>
+<li>非线性关系：多项式回归。</li>
+</ul>
+</div>
+<div class="section level3">
+<h3>潜在的问题</h3>
+<div class="section level4">
+<h4>数据的非线性</h4>
+<p>可通过残差图判断，如存在规律，比如U型，提示数据非线性。简单解决方法是在模型中使用预测变量的非线性变换，例如<span class="math inline">\(\log{X}\)</span>，<span class="math inline">\(\sqrt{X}\)</span>和<span class="math inline">\(X^2\)</span>。</p>
+</div>
+<div class="section level4">
+<h4>误差项自相关</h4>
+<p>如时间序列数据，可通过绘制时间函数的残差，如果不相关，图中没有明显规律，如果相关，相邻残差可能有类似值。</p>
+</div>
+<div class="section level4">
+<h4>误差项方差非恒定</h4>
+<p>如残差图漏斗形（喇叭形），误差性方差随响应值的增加而增加。解决方案：使用凹函数对响应值<em>y</em>进行变换，如<span class="math inline">\(\log{y}和\sqrt{y}\)</span>。有时估计每个响应值的方差，用加权最小二乘法拟合模型，即权重与方差的倒数成反比例。</p>
+</div>
+<div class="section level4">
+<h4>离群点</h4>
+<p>指<span class="math inline">\(y_i\)</span>远离模型预测值的点。可通过残差图识别，通常的血生化残差在-3到3之间。</p>
+</div>
+<div class="section level4">
+<h4>高杠杆点</h4>
+<p>观测点<span class="math inline">\(x_i\)</span>是异常。往往对回归直线的估计有很大的影响。在多远回归中，可通过计算杠杆统计量来判断。</p>
+</div>
+<div class="section level4">
+<h4>共线性</h4>
+<p>计算方差膨胀因子VIF。可从回归中提出一个变量，或把共线性变量组合成一个单一的预测变量。 <span class="math display">\[VIF(\hat{\beta_j})=\frac{1}{1-R_{X_j\,|\, X_{-j}}^2}\]</span></p>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2>营销计划</h2>
+<div class="section level3">
+<h3>（1）广告预算和销量有关吗？</h3>
+<pre class="r"><code># loading packages
+library(&quot;ggplot2&quot;)
+library(&quot;magrittr&quot;)</code></pre>
+<pre class="r"><code># read data
+advdf &lt;- read.csv(&#39;Advertising.csv&#39;)
+head(advdf)</code></pre>
+<table>
+<thead>
+<tr>
+<th scope="col">
+X
+</th>
+<th scope="col">
+TV
+</th>
+<th scope="col">
+radio
+</th>
+<th scope="col">
+newspaper
+</th>
+<th scope="col">
+sales
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;td&gt;1    &lt;/td&gt;&lt;td&gt;230.1&lt;/td&gt;&lt;td&gt;37.8 &lt;/td&gt;&lt;td&gt;69.2 &lt;/td&gt;&lt;td&gt;22.1 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2    &lt;/td&gt;&lt;td&gt; 44.5&lt;/td&gt;&lt;td&gt;39.3 &lt;/td&gt;&lt;td&gt;45.1 &lt;/td&gt;&lt;td&gt;10.4 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;3    &lt;/td&gt;&lt;td&gt; 17.2&lt;/td&gt;&lt;td&gt;45.9 &lt;/td&gt;&lt;td&gt;69.3 &lt;/td&gt;&lt;td&gt; 9.3 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;4    &lt;/td&gt;&lt;td&gt;151.5&lt;/td&gt;&lt;td&gt;41.3 &lt;/td&gt;&lt;td&gt;58.5 &lt;/td&gt;&lt;td&gt;18.5 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;5    &lt;/td&gt;&lt;td&gt;180.8&lt;/td&gt;&lt;td&gt;10.8 &lt;/td&gt;&lt;td&gt;58.4 &lt;/td&gt;&lt;td&gt;12.9 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;6    &lt;/td&gt;&lt;td&gt;  8.7&lt;/td&gt;&lt;td&gt;48.9 &lt;/td&gt;&lt;td&gt;75.0 &lt;/td&gt;&lt;td&gt; 7.2 &lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<div id="tv" class="section level4">
+<h4>（1）TV广告投入对销量影响</h4>
+<pre class="r"><code># TV, sales散点图
+advdf %&gt;% 
+  ggplot(aes(TV, sales)) +
+  geom_point()</code></pre>
+<div class="figure">
+<img src="\images\output_14_1.png" alt="png" />
+<p class="caption">png</p>
+</div>
+<div class="section level5">
+<h5>多重线性回归</h5>
+<pre class="r"><code>fit &lt;- lm(sales ~ TV + radio + newspaper, data = advdf)
+summary(fit)</code></pre>
+<pre><code>Call:
+lm(formula = sales ~ TV + radio + newspaper, data = advdf)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.8277 -0.8908  0.2418  1.1893  2.8292 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  2.938889   0.311908   9.422   &lt;2e-16 ***
+TV           0.045765   0.001395  32.809   &lt;2e-16 ***
+radio        0.188530   0.008611  21.893   &lt;2e-16 ***
+newspaper   -0.001037   0.005871  -0.177     0.86    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.686 on 196 degrees of freedom
+Multiple R-squared:  0.8972,    Adjusted R-squared:  0.8956 
+F-statistic: 570.3 on 3 and 196 DF,  p-value: &lt; 2.2e-16</code></pre>
+<ul>
+<li>F = 570，P&lt;0.05，广告投入和销量存在相关性。</li>
+</ul>
+</div>
+</div>
+<div class="section level4">
+<h4>（2）广告预算和销售间的关系有多强？</h4>
+<ul>
+<li><span class="math inline">\(RSE=1.686\)</span>，响应变量的平均值为14.0225, 误差百分比约为12%。</li>
+<li><span class="math inline">\(R^2=0.89\)</span></li>
+</ul>
+</div>
+<div class="section level4">
+<h4>（3）哪种媒体能促进销售</h4>
+<p>TV、radio #### （4）计算参数估计得置信区间 TV: <span class="math inline">\(0.045765 \,(0.045765 \pm 1.96 \times 0.001395)\)</span>，其他同理。</p>
+<pre class="r"><code># 参数估计置信区间
+confint(fit)</code></pre>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th scope="col">
+2.5 %
+</th>
+<th scope="col">
+97.5 %
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;th scope=row&gt;(Intercept)&lt;/th&gt;&lt;td&gt; 2.32376228&lt;/td&gt;&lt;td&gt;3.55401646 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;TV&lt;/th&gt;&lt;td&gt; 0.04301371&lt;/td&gt;&lt;td&gt;0.04851558 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;radio&lt;/th&gt;&lt;td&gt; 0.17154745&lt;/td&gt;&lt;td&gt;0.20551259 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;newspaper&lt;/th&gt;&lt;td&gt;-0.01261595&lt;/td&gt;&lt;td&gt;0.01054097 &lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+</div>
+<div class="section level4">
+<h4>（5）对未来销售的预测精度如何？</h4>
+<p>想预测单个响应值，可使用预测区间；预测平均响应<span class="math inline">\(f(X)\)</span>，使用置信区间。预测区间比置信区间宽，因为预测区间解释了<span class="math inline">\(\epsilon\)</span>的不确定性，是不可约误差。 #### （6）这种关系是否是线性 可用残差图识别非线性，如下图所示，U型残差图，提示存在非线性效应。</p>
+<pre class="r"><code>par(mfrow = c(2, 2))
+plot(fit)</code></pre>
+<div class="figure">
+<img src="\images\output_21_0.png" alt="png" />
+<p class="caption">png</p>
+</div>
+</div>
+<div class="section level4">
+<h4>（7）广告媒体间是否存在协同效应？</h4>
+<p>标准线性回归模型预测变量和响应变量是可加的，即每个预测变量对响应变量的影响与其他预测变量无关。拟合交互项模型。</p>
+<pre class="r"><code>fit2 &lt;- lm(sales ~ TV + radio + TV : radio, data = advdf)
+summary(fit2)</code></pre>
+<pre><code>Call:
+lm(formula = sales ~ TV + radio + TV:radio, data = advdf)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.3366 -0.4028  0.1831  0.5948  1.5246 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 6.750e+00  2.479e-01  27.233   &lt;2e-16 ***
+TV          1.910e-02  1.504e-03  12.699   &lt;2e-16 ***
+radio       2.886e-02  8.905e-03   3.241   0.0014 ** 
+TV:radio    1.086e-03  5.242e-05  20.727   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.9435 on 196 degrees of freedom
+Multiple R-squared:  0.9678,    Adjusted R-squared:  0.9673 
+F-statistic:  1963 on 3 and 196 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>增加交互项后<span class="math inline">\(R^2\)</span>增加到了0.96.</p>
+</div>
+</div>
+</div>
+<div id="knn" class="section level2">
+<h2>KNN回归</h2>
+<p>给定k值和预测点<span class="math inline">\(x_0\)</span>，首先确定k个最接近<span class="math inline">\(x_0\)</span>的训练观测，,记为<span class="math inline">\(\scr{N_0}\)</span>，用这些数据的平均值来估计<span class="math inline">\(f(x_0)\)</span>。 <span class="math display">\[\hat{f(x_0)}=\frac{1}{K}\sum_{x_i\in\scr{N_0}}y_i\]</span></p>
+</div>
+<div id="lab-linear-regression" class="section level2">
+<h2>Lab: Linear Regression</h2>
+<pre class="r"><code># loading packages
+library(&quot;ISLR&quot;)
+library(&quot;MASS&quot;)</code></pre>
+<div class="section level3">
+<h3>波士顿房价数据集</h3>
+<pre class="r"><code>head(Boston)</code></pre>
+<table>
+<thead>
+<tr>
+<th scope="col">
+crim
+</th>
+<th scope="col">
+zn
+</th>
+<th scope="col">
+indus
+</th>
+<th scope="col">
+chas
+</th>
+<th scope="col">
+nox
+</th>
+<th scope="col">
+rm
+</th>
+<th scope="col">
+age
+</th>
+<th scope="col">
+dis
+</th>
+<th scope="col">
+rad
+</th>
+<th scope="col">
+tax
+</th>
+<th scope="col">
+ptratio
+</th>
+<th scope="col">
+black
+</th>
+<th scope="col">
+lstat
+</th>
+<th scope="col">
+medv
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;td&gt;0.00632&lt;/td&gt;&lt;td&gt;18     &lt;/td&gt;&lt;td&gt;2.31   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.538  &lt;/td&gt;&lt;td&gt;6.575  &lt;/td&gt;&lt;td&gt;65.2   &lt;/td&gt;&lt;td&gt;4.0900 &lt;/td&gt;&lt;td&gt;1      &lt;/td&gt;&lt;td&gt;296    &lt;/td&gt;&lt;td&gt;15.3   &lt;/td&gt;&lt;td&gt;396.90 &lt;/td&gt;&lt;td&gt;4.98   &lt;/td&gt;&lt;td&gt;24.0   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;0.02731&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;7.07   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.469  &lt;/td&gt;&lt;td&gt;6.421  &lt;/td&gt;&lt;td&gt;78.9   &lt;/td&gt;&lt;td&gt;4.9671 &lt;/td&gt;&lt;td&gt;2      &lt;/td&gt;&lt;td&gt;242    &lt;/td&gt;&lt;td&gt;17.8   &lt;/td&gt;&lt;td&gt;396.90 &lt;/td&gt;&lt;td&gt;9.14   &lt;/td&gt;&lt;td&gt;21.6   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;0.02729&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;7.07   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.469  &lt;/td&gt;&lt;td&gt;7.185  &lt;/td&gt;&lt;td&gt;61.1   &lt;/td&gt;&lt;td&gt;4.9671 &lt;/td&gt;&lt;td&gt;2      &lt;/td&gt;&lt;td&gt;242    &lt;/td&gt;&lt;td&gt;17.8   &lt;/td&gt;&lt;td&gt;392.83 &lt;/td&gt;&lt;td&gt;4.03   &lt;/td&gt;&lt;td&gt;34.7   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;0.03237&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;2.18   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.458  &lt;/td&gt;&lt;td&gt;6.998  &lt;/td&gt;&lt;td&gt;45.8   &lt;/td&gt;&lt;td&gt;6.0622 &lt;/td&gt;&lt;td&gt;3      &lt;/td&gt;&lt;td&gt;222    &lt;/td&gt;&lt;td&gt;18.7   &lt;/td&gt;&lt;td&gt;394.63 &lt;/td&gt;&lt;td&gt;2.94   &lt;/td&gt;&lt;td&gt;33.4   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;0.06905&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;2.18   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.458  &lt;/td&gt;&lt;td&gt;7.147  &lt;/td&gt;&lt;td&gt;54.2   &lt;/td&gt;&lt;td&gt;6.0622 &lt;/td&gt;&lt;td&gt;3      &lt;/td&gt;&lt;td&gt;222    &lt;/td&gt;&lt;td&gt;18.7   &lt;/td&gt;&lt;td&gt;396.90 &lt;/td&gt;&lt;td&gt;5.33   &lt;/td&gt;&lt;td&gt;36.2   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;0.02985&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;2.18   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.458  &lt;/td&gt;&lt;td&gt;6.430  &lt;/td&gt;&lt;td&gt;58.7   &lt;/td&gt;&lt;td&gt;6.0622 &lt;/td&gt;&lt;td&gt;3      &lt;/td&gt;&lt;td&gt;222    &lt;/td&gt;&lt;td&gt;18.7   &lt;/td&gt;&lt;td&gt;394.12 &lt;/td&gt;&lt;td&gt;5.21   &lt;/td&gt;&lt;td&gt;28.7   &lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<div id="-1" class="section level4">
+<h4>简单线性回归</h4>
+<p>将lstat（社会经济地位低的家庭所占比例）作为预测变量，medv（房价中位数）作为响应变量。</p>
+<pre class="r"><code>simple.lm &lt;- lm(medv ~ lstat, data = Boston)
+simple.fit &lt;- summary(simple.lm)
+simple.fit</code></pre>
+<pre><code>Call:
+lm(formula = medv ~ lstat, data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-15.168  -3.990  -1.318   2.034  24.500 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 34.55384    0.56263   61.41   &lt;2e-16 ***
+lstat       -0.95005    0.03873  -24.53   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 6.216 on 504 degrees of freedom
+Multiple R-squared:  0.5441,    Adjusted R-squared:  0.5432 
+F-statistic: 601.6 on 1 and 504 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># 模型储存的其他信息
+names(simple.lm)</code></pre>
+<ol class="list-inline">
+<pre><code>&lt;li&gt;&#39;coefficients&#39;&lt;/li&gt;
+&lt;li&gt;&#39;residuals&#39;&lt;/li&gt;
+&lt;li&gt;&#39;effects&#39;&lt;/li&gt;
+&lt;li&gt;&#39;rank&#39;&lt;/li&gt;
+&lt;li&gt;&#39;fitted.values&#39;&lt;/li&gt;
+&lt;li&gt;&#39;assign&#39;&lt;/li&gt;
+&lt;li&gt;&#39;qr&#39;&lt;/li&gt;
+&lt;li&gt;&#39;df.residual&#39;&lt;/li&gt;
+&lt;li&gt;&#39;xlevels&#39;&lt;/li&gt;
+&lt;li&gt;&#39;call&#39;&lt;/li&gt;
+&lt;li&gt;&#39;terms&#39;&lt;/li&gt;
+&lt;li&gt;&#39;model&#39;&lt;/li&gt;</code></pre>
+</ol>
+<pre class="r"><code># 参数置信区间
+confint(simple.lm)</code></pre>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th scope="col">
+2.5 %
+</th>
+<th scope="col">
+97.5 %
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;th scope=row&gt;(Intercept)&lt;/th&gt;&lt;td&gt;33.448457 &lt;/td&gt;&lt;td&gt;35.6592247&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;lstat&lt;/th&gt;&lt;td&gt;-1.026148 &lt;/td&gt;&lt;td&gt;-0.8739505&lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<pre class="r"><code># 根据给定的lstat值预测medv值,置信区间
+predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = &#39;confidence&#39;)</code></pre>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th scope="col">
+fit
+</th>
+<th scope="col">
+lwr
+</th>
+<th scope="col">
+upr
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;th scope=row&gt;1&lt;/th&gt;&lt;td&gt;29.80359&lt;/td&gt;&lt;td&gt;29.00741&lt;/td&gt;&lt;td&gt;30.59978&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;2&lt;/th&gt;&lt;td&gt;25.05335&lt;/td&gt;&lt;td&gt;24.47413&lt;/td&gt;&lt;td&gt;25.63256&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;3&lt;/th&gt;&lt;td&gt;20.30310&lt;/td&gt;&lt;td&gt;19.73159&lt;/td&gt;&lt;td&gt;20.87461&lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<pre class="r"><code># 根据给定的lstat值预测medv值,预测区间
+predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = &#39;prediction&#39;)</code></pre>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th scope="col">
+fit
+</th>
+<th scope="col">
+lwr
+</th>
+<th scope="col">
+upr
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;th scope=row&gt;1&lt;/th&gt;&lt;td&gt;29.80359 &lt;/td&gt;&lt;td&gt;17.565675&lt;/td&gt;&lt;td&gt;42.04151 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;2&lt;/th&gt;&lt;td&gt;25.05335 &lt;/td&gt;&lt;td&gt;12.827626&lt;/td&gt;&lt;td&gt;37.27907 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;3&lt;/th&gt;&lt;td&gt;20.30310 &lt;/td&gt;&lt;td&gt; 8.077742&lt;/td&gt;&lt;td&gt;32.52846 &lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<pre class="r"><code># 散点图和最小二乘回归线
+plot(Boston$lstat, Boston$medv)
+abline(simple.lm, lwd = 3, col = &#39;red&#39;)</code></pre>
+<div class="figure">
+<img src="\images\output_36_0.png" alt="png" />
+<p class="caption">png</p>
+</div>
+<div id="ggplot2" class="section level5">
+<h5>使用ggplot2绘图</h5>
+<pre class="r"><code>Boston %&gt;% 
+  ggplot(aes(lstat, medv)) +
+  geom_point() +
+  geom_smooth(method = &#39;lm&#39;)</code></pre>
+<div class="figure">
+<img src="\images\output_38_1.png" alt="png" />
+<p class="caption">png</p>
+</div>
+</div>
+<div class="section level5">
+<h5>计算残差并绘制散点图</h5>
+<pre class="r"><code># 残差图
+ggplot(NULL, aes(predict(simple.lm), residuals(simple.lm))) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = &#39;predicted value&#39;, y = &#39;residuals&#39;)
+# 学生化残差图
+ggplot(NULL, aes(predict(simple.lm), rstudent(simple.lm))) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = &#39;predicted value&#39;, y = &#39;studentized residuals&#39;)</code></pre>
+<pre><code>`geom_smooth()` using method = &#39;loess&#39;
+
+
+
+
+`geom_smooth()` using method = &#39;loess&#39;</code></pre>
+<div class="figure">
+<img src="\images\output_40_4.png" alt="png" />
+<p class="caption">png</p>
+</div>
+<div class="figure">
+<img src="\images\output_40_5.png" alt="png" />
+<p class="caption">png</p>
+</div>
+<pre class="r"><code># 模型拟合图汇总
+par(mfrow = c(2, 2))
+plot(simple.lm)</code></pre>
+<div class="figure">
+<img src="\images\output_41_0.png" alt="png" />
+<p class="caption">png</p>
+</div>
+<pre class="r"><code># 杠杆统计量值
+plot(hatvalues(simple.lm))
+cat(&#39;最大杠杆统计量索引:&#39;, which.max(hatvalues(simple.lm)))</code></pre>
+<pre><code>最大杠杆统计量索引: 375</code></pre>
+<div class="figure">
+<img src="\images\output_42_1.png" alt="png" />
+<p class="caption">png</p>
+</div>
+</div>
+</div>
+<div id="-1" class="section level4">
+<h4>多元线性回归</h4>
+<pre class="r"><code>mult.lm &lt;- lm(medv ~ ., data = Boston)
+mult.fit &lt;- summary(mult.lm)
+mult.fit</code></pre>
+<pre><code>Call:
+lm(formula = medv ~ ., data = Boston)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-15.595  -2.730  -0.518   1.777  26.199 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  3.646e+01  5.103e+00   7.144 3.28e-12 ***
+crim        -1.080e-01  3.286e-02  -3.287 0.001087 ** 
+zn           4.642e-02  1.373e-02   3.382 0.000778 ***
+indus        2.056e-02  6.150e-02   0.334 0.738288    
+chas         2.687e+00  8.616e-01   3.118 0.001925 ** 
+nox         -1.777e+01  3.820e+00  -4.651 4.25e-06 ***
+rm           3.810e+00  4.179e-01   9.116  &lt; 2e-16 ***
+age          6.922e-04  1.321e-02   0.052 0.958229    
+dis         -1.476e+00  1.995e-01  -7.398 6.01e-13 ***
+rad          3.060e-01  6.635e-02   4.613 5.07e-06 ***
+tax         -1.233e-02  3.760e-03  -3.280 0.001112 ** 
+ptratio     -9.527e-01  1.308e-01  -7.283 1.31e-12 ***
+black        9.312e-03  2.686e-03   3.467 0.000573 ***
+lstat       -5.248e-01  5.072e-02 -10.347  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 4.745 on 492 degrees of freedom
+Multiple R-squared:  0.7406,    Adjusted R-squared:  0.7338 
+F-statistic: 108.1 on 13 and 492 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>names(mult.fit)</code></pre>
+<ol class="list-inline">
+<pre><code>&lt;li&gt;&#39;call&#39;&lt;/li&gt;
+&lt;li&gt;&#39;terms&#39;&lt;/li&gt;
+&lt;li&gt;&#39;residuals&#39;&lt;/li&gt;
+&lt;li&gt;&#39;coefficients&#39;&lt;/li&gt;
+&lt;li&gt;&#39;aliased&#39;&lt;/li&gt;
+&lt;li&gt;&#39;sigma&#39;&lt;/li&gt;
+&lt;li&gt;&#39;df&#39;&lt;/li&gt;
+&lt;li&gt;&#39;r.squared&#39;&lt;/li&gt;
+&lt;li&gt;&#39;adj.r.squared&#39;&lt;/li&gt;
+&lt;li&gt;&#39;fstatistic&#39;&lt;/li&gt;
+&lt;li&gt;&#39;cov.unscaled&#39;&lt;/li&gt;</code></pre>
+</ol>
+<pre class="r"><code># 计算方差膨胀因子
+car::vif(mult.lm)</code></pre>
+<dl class="dl-horizontal">
+<pre><code>&lt;dt&gt;crim&lt;/dt&gt;
+    &lt;dd&gt;1.79219154743324&lt;/dd&gt;
+&lt;dt&gt;zn&lt;/dt&gt;
+    &lt;dd&gt;2.29875817874944&lt;/dd&gt;
+&lt;dt&gt;indus&lt;/dt&gt;
+    &lt;dd&gt;3.99159641834602&lt;/dd&gt;
+&lt;dt&gt;chas&lt;/dt&gt;
+    &lt;dd&gt;1.07399532755379&lt;/dd&gt;
+&lt;dt&gt;nox&lt;/dt&gt;
+    &lt;dd&gt;4.39371984757748&lt;/dd&gt;
+&lt;dt&gt;rm&lt;/dt&gt;
+    &lt;dd&gt;1.93374443578326&lt;/dd&gt;
+&lt;dt&gt;age&lt;/dt&gt;
+    &lt;dd&gt;3.10082551281533&lt;/dd&gt;
+&lt;dt&gt;dis&lt;/dt&gt;
+    &lt;dd&gt;3.95594490637272&lt;/dd&gt;
+&lt;dt&gt;rad&lt;/dt&gt;
+    &lt;dd&gt;7.48449633527445&lt;/dd&gt;
+&lt;dt&gt;tax&lt;/dt&gt;
+    &lt;dd&gt;9.00855394759706&lt;/dd&gt;
+&lt;dt&gt;ptratio&lt;/dt&gt;
+    &lt;dd&gt;1.79908404924889&lt;/dd&gt;
+&lt;dt&gt;black&lt;/dt&gt;
+    &lt;dd&gt;1.34852107640637&lt;/dd&gt;
+&lt;dt&gt;lstat&lt;/dt&gt;
+    &lt;dd&gt;2.94149107809193&lt;/dd&gt;</code></pre>
+</dl>
+<div id="age" class="section level5">
+<h5>去除age变量后回归</h5>
+<pre class="r"><code>mult.lm2 &lt;- lm(medv ~ . -age, data = Boston)
+(mult.fit2 &lt;- summary(mult.lm2))</code></pre>
+<pre><code>Call:
+lm(formula = medv ~ . - age, data = Boston)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-15.6054  -2.7313  -0.5188   1.7601  26.2243 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  36.436927   5.080119   7.172 2.72e-12 ***
+crim         -0.108006   0.032832  -3.290 0.001075 ** 
+zn            0.046334   0.013613   3.404 0.000719 ***
+indus         0.020562   0.061433   0.335 0.737989    
+chas          2.689026   0.859598   3.128 0.001863 ** 
+nox         -17.713540   3.679308  -4.814 1.97e-06 ***
+rm            3.814394   0.408480   9.338  &lt; 2e-16 ***
+dis          -1.478612   0.190611  -7.757 5.03e-14 ***
+rad           0.305786   0.066089   4.627 4.75e-06 ***
+tax          -0.012329   0.003755  -3.283 0.001099 ** 
+ptratio      -0.952211   0.130294  -7.308 1.10e-12 ***
+black         0.009321   0.002678   3.481 0.000544 ***
+lstat        -0.523852   0.047625 -10.999  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 4.74 on 493 degrees of freedom
+Multiple R-squared:  0.7406,    Adjusted R-squared:  0.7343 
+F-statistic: 117.3 on 12 and 493 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># 或者等价于
+mult.lm22 &lt;- update(mult.lm, ~.-age)
+summary(mult.lm22)</code></pre>
+<pre><code>Call:
+lm(formula = medv ~ crim + zn + indus + chas + nox + rm + dis + 
+    rad + tax + ptratio + black + lstat, data = Boston)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-15.6054  -2.7313  -0.5188   1.7601  26.2243 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  36.436927   5.080119   7.172 2.72e-12 ***
+crim         -0.108006   0.032832  -3.290 0.001075 ** 
+zn            0.046334   0.013613   3.404 0.000719 ***
+indus         0.020562   0.061433   0.335 0.737989    
+chas          2.689026   0.859598   3.128 0.001863 ** 
+nox         -17.713540   3.679308  -4.814 1.97e-06 ***
+rm            3.814394   0.408480   9.338  &lt; 2e-16 ***
+dis          -1.478612   0.190611  -7.757 5.03e-14 ***
+rad           0.305786   0.066089   4.627 4.75e-06 ***
+tax          -0.012329   0.003755  -3.283 0.001099 ** 
+ptratio      -0.952211   0.130294  -7.308 1.10e-12 ***
+black         0.009321   0.002678   3.481 0.000544 ***
+lstat        -0.523852   0.047625 -10.999  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 4.74 on 493 degrees of freedom
+Multiple R-squared:  0.7406,    Adjusted R-squared:  0.7343 
+F-statistic: 117.3 on 12 and 493 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<div class="section level4">
+<h4>交互项</h4>
+<p>lstat:age表示将两者交互项加入方程，lstat*age表示将lstat，age和交互项加入方程。以下等价：</p>
+<pre class="r"><code>lm(medv ~ lstat * age, data = Boston)
+lm(medv ~ lstat + age + lstat : age, data = Boston</code></pre>
+</div>
+<div class="section level4">
+<h4>预测变量非线性变换</h4>
+<p>建立平方项：<span class="math inline">\(I(X^2)\)</span></p>
+<pre class="r"><code>fit2 &lt;- lm(medv ~ lstat + I(lstat ^ 2), data = Boston)
+fit2 %&gt;% summary</code></pre>
+<pre><code>Call:
+lm(formula = medv ~ lstat + I(lstat^2), data = Boston)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-15.2834  -3.8313  -0.5295   2.3095  25.4148 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 42.862007   0.872084   49.15   &lt;2e-16 ***
+lstat       -2.332821   0.123803  -18.84   &lt;2e-16 ***
+I(lstat^2)   0.043547   0.003745   11.63   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 5.524 on 503 degrees of freedom
+Multiple R-squared:  0.6407,    Adjusted R-squared:  0.6393 
+F-statistic: 448.5 on 2 and 503 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="section level5">
+<h5>比较两模型</h5>
+<pre class="r"><code>anova(lm(medv ~ lstat, data = Boston), fit2)</code></pre>
+<table>
+<thead>
+<tr>
+<th scope="col">
+Res.Df
+</th>
+<th scope="col">
+RSS
+</th>
+<th scope="col">
+Df
+</th>
+<th scope="col">
+Sum of Sq
+</th>
+<th scope="col">
+F
+</th>
+<th scope="col">
+Pr(&gt;F)
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;td&gt;504         &lt;/td&gt;&lt;td&gt;19472.38    &lt;/td&gt;&lt;td&gt;NA          &lt;/td&gt;&lt;td&gt;      NA    &lt;/td&gt;&lt;td&gt;      NA    &lt;/td&gt;&lt;td&gt;          NA&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;503         &lt;/td&gt;&lt;td&gt;15347.24    &lt;/td&gt;&lt;td&gt; 1          &lt;/td&gt;&lt;td&gt;4125.138    &lt;/td&gt;&lt;td&gt;135.1998    &lt;/td&gt;&lt;td&gt;7.630116e-28&lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<p>绘制残差图，残差规律很少</p>
+<pre class="r"><code>par(mfrow = c(2, 2))
+plot(fit2)</code></pre>
+<div class="figure">
+<img src="\images\output_56_0.png" alt="png" />
+<p class="caption">png</p>
+</div>
+</div>
+</div>
+<div id="-1" class="section level4">
+<h4>定性预测变量</h4>
+<div id="carseats" class="section level5">
+<h5>Carseats数据集</h5>
+<p>预测400个地区的Sales（儿童座椅销量），Shelveloc（每个地区搁架位置的质量指标），为分类的定性变量。</p>
+<pre class="r"><code>Carseats &lt;- ISLR::Carseats
+head(Carseats)</code></pre>
+<table>
+<thead>
+<tr>
+<th scope="col">
+Sales
+</th>
+<th scope="col">
+CompPrice
+</th>
+<th scope="col">
+Income
+</th>
+<th scope="col">
+Advertising
+</th>
+<th scope="col">
+Population
+</th>
+<th scope="col">
+Price
+</th>
+<th scope="col">
+ShelveLoc
+</th>
+<th scope="col">
+Age
+</th>
+<th scope="col">
+Education
+</th>
+<th scope="col">
+Urban
+</th>
+<th scope="col">
+US
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;td&gt; 9.50 &lt;/td&gt;&lt;td&gt;138   &lt;/td&gt;&lt;td&gt; 73   &lt;/td&gt;&lt;td&gt;11    &lt;/td&gt;&lt;td&gt;276   &lt;/td&gt;&lt;td&gt;120   &lt;/td&gt;&lt;td&gt;Bad   &lt;/td&gt;&lt;td&gt;42    &lt;/td&gt;&lt;td&gt;17    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;11.22 &lt;/td&gt;&lt;td&gt;111   &lt;/td&gt;&lt;td&gt; 48   &lt;/td&gt;&lt;td&gt;16    &lt;/td&gt;&lt;td&gt;260   &lt;/td&gt;&lt;td&gt; 83   &lt;/td&gt;&lt;td&gt;Good  &lt;/td&gt;&lt;td&gt;65    &lt;/td&gt;&lt;td&gt;10    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;10.06 &lt;/td&gt;&lt;td&gt;113   &lt;/td&gt;&lt;td&gt; 35   &lt;/td&gt;&lt;td&gt;10    &lt;/td&gt;&lt;td&gt;269   &lt;/td&gt;&lt;td&gt; 80   &lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;59    &lt;/td&gt;&lt;td&gt;12    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt; 7.40 &lt;/td&gt;&lt;td&gt;117   &lt;/td&gt;&lt;td&gt;100   &lt;/td&gt;&lt;td&gt; 4    &lt;/td&gt;&lt;td&gt;466   &lt;/td&gt;&lt;td&gt; 97   &lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;55    &lt;/td&gt;&lt;td&gt;14    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt; 4.15 &lt;/td&gt;&lt;td&gt;141   &lt;/td&gt;&lt;td&gt; 64   &lt;/td&gt;&lt;td&gt; 3    &lt;/td&gt;&lt;td&gt;340   &lt;/td&gt;&lt;td&gt;128   &lt;/td&gt;&lt;td&gt;Bad   &lt;/td&gt;&lt;td&gt;38    &lt;/td&gt;&lt;td&gt;13    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;No    &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;10.81 &lt;/td&gt;&lt;td&gt;124   &lt;/td&gt;&lt;td&gt;113   &lt;/td&gt;&lt;td&gt;13    &lt;/td&gt;&lt;td&gt;501   &lt;/td&gt;&lt;td&gt; 72   &lt;/td&gt;&lt;td&gt;Bad   &lt;/td&gt;&lt;td&gt;78    &lt;/td&gt;&lt;td&gt;16    &lt;/td&gt;&lt;td&gt;No    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<pre class="r"><code># 编码规则
+contrasts(Carseats$ShelveLoc)</code></pre>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th scope="col">
+Good
+</th>
+<th scope="col">
+Medium
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;th scope=row&gt;Bad&lt;/th&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;Good&lt;/th&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;Medium&lt;/th&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<pre class="r"><code># 拟合交互项模型
+lm(Sales ~ . + Income : Advertising + Price : Age, data = Carseats) %&gt;% summary</code></pre>
+<pre><code>Call:
+lm(formula = Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.9208 -0.7503  0.0177  0.6754  3.3413 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         6.5755654  1.0087470   6.519 2.22e-10 ***
+CompPrice           0.0929371  0.0041183  22.567  &lt; 2e-16 ***
+Income              0.0108940  0.0026044   4.183 3.57e-05 ***
+Advertising         0.0702462  0.0226091   3.107 0.002030 ** 
+Population          0.0001592  0.0003679   0.433 0.665330    
+Price              -0.1008064  0.0074399 -13.549  &lt; 2e-16 ***
+ShelveLocGood       4.8486762  0.1528378  31.724  &lt; 2e-16 ***
+ShelveLocMedium     1.9532620  0.1257682  15.531  &lt; 2e-16 ***
+Age                -0.0579466  0.0159506  -3.633 0.000318 ***
+Education          -0.0208525  0.0196131  -1.063 0.288361    
+UrbanYes            0.1401597  0.1124019   1.247 0.213171    
+USYes              -0.1575571  0.1489234  -1.058 0.290729    
+Income:Advertising  0.0007510  0.0002784   2.698 0.007290 ** 
+Price:Age           0.0001068  0.0001333   0.801 0.423812    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.011 on 386 degrees of freedom
+Multiple R-squared:  0.8761,    Adjusted R-squared:  0.8719 
+F-statistic:   210 on 13 and 386 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2>习题</h2>
+<div id="10" class="section level4">
+<h4>第10题</h4>
+<pre class="r"><code># 使用Population，Urban和US对Sales进行估计
+lm(Sales ~ Population + Urban + US, data = Carseats) %&gt;% summary</code></pre>
+<pre><code>Call:
+lm(formula = Sales ~ Population + Urban + US, data = Carseats)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.3323 -1.9844 -0.0824  1.8783  8.4053 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  6.7262086  0.4009409  16.776  &lt; 2e-16 ***
+Population   0.0007415  0.0009499   0.781 0.435475    
+UrbanYes    -0.1341034  0.3063701  -0.438 0.661830    
+USYes        1.0360741  0.2921241   3.547 0.000437 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.787 on 396 degrees of freedom
+Multiple R-squared:  0.03342,   Adjusted R-squared:  0.02609 
+F-statistic: 4.563 on 3 and 396 DF,  p-value: 0.003713</code></pre>
+<p>把模型写成方程形式： 6.726 + 0.007415*Population {- 0.1341034 if Urban} {+ 1.0261 if US}</p>
+<pre class="r"><code># 简化模型
+ex10.fit &lt;- lm(Sales ~ US, data = Carseats)
+ex10.fit %&gt;% summary</code></pre>
+<pre><code>Call:
+lm(formula = Sales ~ US, data = Carseats)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-7.497 -1.929 -0.105  1.836  8.403 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   6.8230     0.2335   29.21  &lt; 2e-16 ***
+USYes         1.0439     0.2908    3.59 0.000372 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 2.783 on 398 degrees of freedom
+Multiple R-squared:  0.03136,   Adjusted R-squared:  0.02893 
+F-statistic: 12.89 on 1 and 398 DF,  p-value: 0.0003723</code></pre>
+<pre class="r"><code>par(mfrow = c(2, 2))
+plot(ex10.fit)</code></pre>
+<div class="figure">
+<img src="\images\output_67_0.png" alt="png" />
+<p class="caption">png</p>
+</div>
+</div>
+<div id="11" class="section level4">
+<h4>第11题</h4>
+<pre class="r"><code># 生成模拟数据
+set.seed(1)
+x &lt;- rnorm(100)
+y &lt;- 2 * x + rnorm(100)</code></pre>
+<pre class="r"><code>ggplot(NULL, aes(x, y)) + geom_point()</code></pre>
+<div class="figure">
+<img src="\images\output_70_1.png" alt="png" />
+<p class="caption">png</p>
+</div>
+<div class="section level5">
+<h5>建立不含截距的简单线性模型</h5>
+<pre class="r"><code>ex11.lm &lt;- lm(y ~ x + 0)
+summary(ex11.lm)</code></pre>
+<pre><code>Call:
+lm(formula = y ~ x + 0)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.9154 -0.6472 -0.1771  0.5056  2.3109 
+
+Coefficients:
+  Estimate Std. Error t value Pr(&gt;|t|)    
+x   1.9939     0.1065   18.73   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.9586 on 99 degrees of freedom
+Multiple R-squared:  0.7798,    Adjusted R-squared:  0.7776 
+F-statistic: 350.7 on 1 and 99 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="section level5">
+<h5>将拟合直线添加到散点图</h5>
+<pre class="r"><code>ggplot(NULL, aes(x, y)) + geom_point() + geom_abline(slope = 1.9939, intercept = 0)</code></pre>
+<div class="figure">
+<img src="\images\output_74_1.png" alt="png" />
+<p class="caption">png</p>
+</div>
+</div>
+<div id="xy" class="section level5">
+<h5>建立x对y的无截距模型</h5>
+<pre class="r"><code>lm(x ~ y + 0) %&gt;% summary</code></pre>
+<pre><code>Call:
+lm(formula = x ~ y + 0)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.8699 -0.2368  0.1030  0.2858  0.8938 
+
+Coefficients:
+  Estimate Std. Error t value Pr(&gt;|t|)    
+y  0.39111    0.02089   18.73   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.4246 on 99 degrees of freedom
+Multiple R-squared:  0.7798,    Adjusted R-squared:  0.7776 
+F-statistic: 350.7 on 1 and 99 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>两个模型t统计量相等，对于有截距模型，两者的t统计量依旧相等</p>
+<pre class="r"><code>ex11.fit1 &lt;- lm(y ~ x)
+ex11.fit2 &lt;- lm(x ~ y)
+
+summary(ex11.fit1)$coefficients</code></pre>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th scope="col">
+Estimate
+</th>
+<th scope="col">
+Std. Error
+</th>
+<th scope="col">
+t value
+</th>
+<th scope="col">
+Pr(&gt;|t|)
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;th scope=row&gt;(Intercept)&lt;/th&gt;&lt;td&gt;-0.03769261 &lt;/td&gt;&lt;td&gt;0.09698729  &lt;/td&gt;&lt;td&gt;-0.3886346  &lt;/td&gt;&lt;td&gt;6.983896e-01&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;x&lt;/th&gt;&lt;td&gt; 1.99893961 &lt;/td&gt;&lt;td&gt;0.10772703  &lt;/td&gt;&lt;td&gt;18.5555993  &lt;/td&gt;&lt;td&gt;7.723851e-34&lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+<pre class="r"><code>summary(ex11.fit2)$coefficients</code></pre>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th scope="col">
+Estimate
+</th>
+<th scope="col">
+Std. Error
+</th>
+<th scope="col">
+t value
+</th>
+<th scope="col">
+Pr(&gt;|t|)
+</th>
+</tr>
+</thead>
+<tbody>
+<pre><code>&lt;tr&gt;&lt;th scope=row&gt;(Intercept)&lt;/th&gt;&lt;td&gt;0.03880394  &lt;/td&gt;&lt;td&gt;0.04266144  &lt;/td&gt;&lt;td&gt; 0.9095787  &lt;/td&gt;&lt;td&gt;3.652764e-01&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th scope=row&gt;y&lt;/th&gt;&lt;td&gt;0.38942451  &lt;/td&gt;&lt;td&gt;0.02098690  &lt;/td&gt;&lt;td&gt;18.5555993  &lt;/td&gt;&lt;td&gt;7.723851e-34&lt;/td&gt;&lt;/tr&gt;</code></pre>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2>习题好多啊，未完待续。。。</h2>
+</div>

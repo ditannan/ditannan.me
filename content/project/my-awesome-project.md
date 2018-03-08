@@ -1,20 +1,22 @@
 +++
-title = "My awesome project"
-description = "Description of my awesome project."
-date = 2014-11-18T02:13:50Z
+title = "统计咨询"
+description = "记录那些年接过的统计咨询"
+date = 2018-03-08T15:13:50Z
 author = "My name"
 +++
 
-## About project
+RT
 
-Aenean ipsum justo, semper eu nisl ut, pretium tincidunt sem. Praesent et diam sit amet lacus lobortis dictum a id lacus. Quisque hendrerit sit amet turpis eu varius. Ut id lorem ac felis ultrices tincidunt. Pellentesque consequat arcu ac fringilla imperdiet. Phasellus pellentesque, sapien non pulvinar blandit, sapien ante aliquet felis, vel porttitor sapien ante in lacus. Fusce non urna aliquet, malesuada nibh vel, luctus urna. Phasellus ut lacus molestie, varius purus quis, malesuada lorem.
+- [倾向性评分分析](https://github.com/ditannan/StatC/tree/master/Tan_PSM)
 
-## Install
+- [绘制带地毯边际线图](https://github.com/ditannan/StatC/tree/master/PlotRug)
 
-```bash
-go get -u -v github.com/spf13/hugo
-```
+- [绘制带两两比较p值标识的箱式图](https://github.com/ditannan/StatC/tree/master/Pvalue_Barchart)
 
-## Docs
+- [自动t、秩和检验，一个变量和好多变量相关性分析，并制成三线表](https://github.com/ditannan/StatC/tree/master/autoCMP_correlation)
 
-https://godoc.org/github.com/spf13/hugo
+- [两两比较方差分析，多重比较，并制成三线表；组内相关系数计算](https://github.com/ditannan/StatC/tree/master/Aov_ICC)
+
+## 源代码
+
+https://github.com/ditannan/StatC

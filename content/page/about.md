@@ -1,14 +1,12 @@
-+++
-title = "About"
-date = 2015-04-03T02:13:50Z
-author = "My Name"
-description = "Things about me."
-+++
+---
+title: "关于"
+date: "2018-03-07T21:48:51-07:00"
+---
 
-## About
+这是低碳南的博客，之前用Hexo在github.io部署了一个博客，一切都好，但是要演示R中代码和结果就比较费劲了。所以就转战用[yihui](https://yihui.name/)大神的blogdown包进行博客管理，好在文章也不多，迁移也不麻烦，麻烦的是对网站搭建并不熟悉，所以就慢慢添加元素吧。
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec dolor in magna lobortis egestas. Suspendisse eu erat tempor, tristique neque eu, convallis nulla. Curabitur vel bibendum lacus, at semper mauris. Suspendisse aliquet commodo ex, sed sagittis metus aliquam id. Maecenas feugiat rutrum lorem vel imperdiet. Nullam ornare lectus ut enim finibus, et porttitor mi tincidunt. Aenean lacinia, leo quis vehicula eleifend, quam libero sagittis erat, at euismod augue mauris et sapien. Sed id vehicula lectus, sit amet auctor ipsum. Nunc sed massa vel ex condimentum aliquam in a enim. Cras enim sem, tristique eu enim ac, congue commodo mi. Integer quis orci at dolor blandit eleifend.
+想建博客的初衷呢，是想记录下自己平时的学习和遇到的一些问题，因为经常感觉很多技巧之前学过，由于不怎么用又忘了，再用时就很郁闷了……所以就为自己找个记录的地方，也记录自己的成长吧……
 
-## School
+本人不善文字，美其名曰医学生，却不懂啥医学知识。喜欢统计，在"恶补"很多基础知识。喜欢开源，从SAS转战R，Python了解皮毛，因为搭建博客去学习了HTML，CSS，JS等基本知识，不求炉火纯青，只望能看懂基本网页源码。
 
-Sed quis pulvinar nisi, sed dapibus lacus. Mauris tempus ex ut ipsum facilisis interdum. Integer feugiat urna sed feugiat tempor. Quisque dictum vestibulum feugiat. Nunc nec est volutpat lorem imperdiet egestas sit amet ut orci. Aliquam venenatis neque ipsum, a placerat lectus cursus at. Donec pellentesque tellus hendrerit faucibus posuere. Etiam gravida consequat lectus, volutpat consectetur velit convallis nec. Praesent sagittis luctus dignissim.
+对数据挖掘和机器学习有憧憬，由于数学没经过系统训练，功底薄弱，励志慢慢补上，望在Data Science找到一丢丢落脚位置……
