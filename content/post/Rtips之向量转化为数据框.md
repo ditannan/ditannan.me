@@ -1,9 +1,14 @@
 ---
 title: Rtips之向量转化为数据框
-date: 2018-03-01 22:14:51
-tags: [R tips, R, 数据框]
-categories: R tips
-toc: true
+author: Delta
+date: '2018-03-01'
+categories:
+  - R tips
+tags:
+  - R
+  - R tips
+  - 数据框
+toc: yes
 ---
 
 ## 前言

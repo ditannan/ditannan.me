@@ -1,8 +1,14 @@
 ---
 title: 'R markdown tip: shortcut of insert R code'
-date: 2018-03-04 23:29:06
-tags: [R, Rstudio, R markdown, shortcut]
-categories: R
+author: Delta
+date: '2018-03-04'
+categories:
+  - R
+tags:
+  - R
+  - R markdown
+  - Rstudio
+  - shortcut
 ---
 
 快捷键可以提高工作的效率，上回简单介绍了一下再R中使用的快捷键，点击[Rstudio快捷键](https://ditannan.github.io/2018/02/27/Rstudio-%E5%BF%AB%E6%8D%B7%E9%94%AE/)查看。

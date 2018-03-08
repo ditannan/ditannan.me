@@ -1,9 +1,14 @@
 ---
 title: Rstudio 快捷键
-date: 2018-02-27 12:16:25
-tags: [R, Rstudio, R tips]
-categories: R tips
-toc: true
+author: Delta
+date: '2018-02-27'
+categories:
+  - R tips
+tags:
+  - R
+  - R tips
+  - Rstudio
+toc: yes
 ---
 
 ## 前言
