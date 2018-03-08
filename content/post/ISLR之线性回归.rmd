@@ -10,7 +10,6 @@ tags:
   - R
   - regression
 mathjax: yes
-toc: yes
 ---
 
 原书地址：[An Introduction to Statistical Learning: with Applications in R](http://www-bcf.usc.edu/~gareth/ISL/)
@@ -25,7 +24,7 @@ $$Y\approx\beta_0+\beta_1X$$
 $$\hat{y}=\hat{\beta_0}+\hat{\beta_1}x$$
 
 ---
-<!-- more-->
+
 
 ### 估计系数
 最小二乘估计。

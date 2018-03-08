@@ -9,6 +9,7 @@ relativeURLs = true
 enableEmoji = true
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 hasCJKLanguage = true
+uglyURLs = true
 
 [Author]
     name = "低碳南"
