@@ -7,7 +7,7 @@ disqusShortname = "XXX"
 googleAnalytics = "XXX"
 relativeURLs = true
 enableEmoji = true
-ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+#ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 hasCJKLanguage = true
 
 [Author]
