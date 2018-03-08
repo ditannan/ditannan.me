@@ -1,4 +1,4 @@
-baseurl = "ditannan.me"
+baseurl = "https://ditannan.netlify.com/"
 title = "以梦为马，不负韶华"
 theme = "ghostwriter"
 languageCode = "zh-Hans"
