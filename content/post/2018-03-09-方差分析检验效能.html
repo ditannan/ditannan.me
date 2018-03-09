@@ -1,0 +1,110 @@
+---
+title: 方差分析检验效能
+author: Delta
+date: '2018-03-09'
+slug: 方差分析检验效能
+categories: [统计]
+tags: [ANOVA, R, 统计]
+description: 'compute statistical power in anova'
+---
+
+
+
+<div class="section level1">
+<h1>开工</h1>
+<div id="loading-packages" class="section level2">
+<h2>loading packages</h2>
+<pre class="r"><code>library(&#39;pwr&#39;)</code></pre>
+</div>
+<div id="example" class="section level2">
+<h2>example</h2>
+<p>五个组做单因素方差分析，<span class="math inline">\(1-\beta=0.8\)</span>,<span class="math inline">\(EF=0.25\)</span>,<span class="math inline">\(\alpha=0.05\)</span>，计算各组样本量。 其中effect size可通过如下公式（1）计算： <span class="math display">\[f=\sqrt{\frac{\sum_{i-1}^kp_i\times(\mu_i-\mu)^2}{\sigma^2}}\tag{1}\]</span> 其中<span class="math inline">\(p_i=n_i/N\)</span>，<span class="math inline">\(\sigma^2\)</span>为组内误差方差。</p>
+<p>或者通过公式（2）计算： <span class="math display">\[f=\sqrt{\frac{\eta^2}{1-\eta^2}}\tag{2}\]</span> 其中<span class="math inline">\(\eta^2\)</span>是方差分析表中组间SS除以总的SS。</p>
+<p><code>pwr</code>包可用来计算各种情况power，其中方差分析计算函数为<code>pwr.anova.test()</code>，参数主要有5个。</p>
+<pre class="r"><code>pwr.anova.test(k = NULL, n = NULL, f = NULL, sig.level = 0.05, power = NULL)</code></pre>
+<ul>
+<li>k: Number of groups</li>
+<li>n: Number of observations (per group)</li>
+<li>f: Effect size</li>
+<li>sig.level: Significance level (Type I error probability)</li>
+<li>power: Power of test (1 minus Type II error probability)</li>
+</ul>
+<p>可通过帮助文档查看详情。</p>
+<pre class="r"><code>pwr.anova.test(k = 5, f = .25, sig.level = .05, power = .8)
+#&gt; 
+#&gt;      Balanced one-way analysis of variance power calculation 
+#&gt; 
+#&gt;               k = 5
+#&gt;               n = 39.1534
+#&gt;               f = 0.25
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.8
+#&gt; 
+#&gt; NOTE: n is number in each group</code></pre>
+<p><span class="math inline">\(n=39\)</span>，总样本量为195。 倘若我只有150样本量，会怎样呢，我们计算一下power。</p>
+<pre class="r"><code>pwr.anova.test(k = 5, n = 30, f = .25, sig.level = .05)
+#&gt; 
+#&gt;      Balanced one-way analysis of variance power calculation 
+#&gt; 
+#&gt;               k = 5
+#&gt;               n = 30
+#&gt;               f = 0.25
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.6675964
+#&gt; 
+#&gt; NOTE: n is number in each group</code></pre>
+<p>我们看到power等于0.668，也就是说我们用150个样本，有66.8%的概率在0.05检验水准的情况下发现差异。</p>
+<p>计算effect size时需要估计同方差时五个组的均值，如果不知道可参考Cohen提出的“小”、“中”、“大”基准做参考。</p>
+<table>
+<thead>
+<tr class="header">
+<th>统计方法</th>
+<th>效应值测量</th>
+<th>小</th>
+<th>中</th>
+<th>大</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>t检验</td>
+<td>d</td>
+<td>0.20</td>
+<td>0.50</td>
+<td>0.80</td>
+</tr>
+<tr class="even">
+<td>方差分析</td>
+<td>f</td>
+<td>0.10</td>
+<td>0.25</td>
+<td>0.40</td>
+</tr>
+<tr class="odd">
+<td>线性模型</td>
+<td>f2</td>
+<td>0.02</td>
+<td>0.15</td>
+<td>0.35</td>
+</tr>
+<tr class="even">
+<td>比例模型</td>
+<td>h</td>
+<td>0.20</td>
+<td>0.50</td>
+<td>0.80</td>
+</tr>
+<tr class="odd">
+<td>卡方检验</td>
+<td>w</td>
+<td>0.10</td>
+<td>0.30</td>
+<td>0.50</td>
+</tr>
+</tbody>
+</table>
+<p>当各组样本量不一致时该怎么计算呢？</p>
+<p>请听下回分解……</p>
+<p>Peace out……</p>
+</div>
+</div>

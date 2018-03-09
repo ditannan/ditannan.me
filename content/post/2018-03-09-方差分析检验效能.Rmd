@@ -1,0 +1,71 @@
+---
+title: 方差分析检验效能
+author: Delta
+date: '2018-03-09'
+slug: 方差分析检验效能
+categories: [统计]
+tags: [ANOVA, R, 统计]
+description: 'compute statistical power in anova'
+---
+
+
+# 开工
+```{r setup, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+```
+
+## loading packages
+```{r loading packages, message=FALSE, warning=FALSE}
+library('pwr')
+```
+
+## example
+五个组做单因素方差分析，$1-\beta=0.8$,$EF=0.25$,$\alpha=0.05$，计算各组样本量。
+其中effect size可通过如下公式（1）计算：
+$$f=\sqrt{\frac{\sum_{i-1}^kp_i\times(\mu_i-\mu)^2}{\sigma^2}}\tag{1}$$
+其中$p_i=n_i/N$，$\sigma^2$为组内误差方差。
+
+或者通过公式（2）计算：
+$$f=\sqrt{\frac{\eta^2}{1-\eta^2}}\tag{2}$$
+其中$\eta^2$是方差分析表中组间SS除以总的SS。
+
+`pwr`包可用来计算各种情况power，其中方差分析计算函数为`pwr.anova.test()`，参数主要有5个。
+
+```r
+pwr.anova.test(k = NULL, n = NULL, f = NULL, sig.level = 0.05, power = NULL)
+```
+
+- k: Number of groups
+- n: Number of observations (per group)
+- f: Effect size
+- sig.level: Significance level (Type I error probability)
+- power: Power of test (1 minus Type II error probability)
+
+可通过帮助文档查看详情。
+
+```{r one way anova}
+pwr.anova.test(k = 5, f = .25, sig.level = .05, power = .8)
+
+```
+$n=39$，总样本量为`r 39 * 5`。
+倘若我只有150样本量，会怎样呢，我们计算一下power。
+```{r}
+pwr.anova.test(k = 5, n = 30, f = .25, sig.level = .05)
+```
+我们看到power等于0.668，也就是说我们用150个样本，有66.8%的概率在0.05检验水准的情况下发现差异。
+
+计算effect size时需要估计同方差时五个组的均值，如果不知道可参考Cohen提出的“小”、“中”、“大”基准做参考。
+
+|统计方法|效应值测量|小|中|大|
+|--------|----------|--|--|--|
+|t检验|d|0.20|0.50|0.80|
+|方差分析|f|0.10|0.25|0.40|
+|线性模型|f2|0.02|0.15|0.35|
+|比例模型|h|0.20|0.50|0.80|
+|卡方检验|w|0.10|0.30|0.50|
+
+当各组样本量不一致时该怎么计算呢？
+
+请听下回分解……
+
+Peace out……
