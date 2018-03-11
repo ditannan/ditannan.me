@@ -91,35 +91,19 @@ library(&quot;magrittr&quot;)</code></pre>
 <pre class="r"><code># read data
 advdf &lt;- read.csv(&#39;Advertising.csv&#39;)
 head(advdf)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th scope="col">
-X
-</th>
-<th scope="col">
-TV
-</th>
-<th scope="col">
-radio
-</th>
-<th scope="col">
-newspaper
-</th>
-<th scope="col">
-sales
-</th>
-</tr>
-</thead>
+<thead><tr><th scope=col>X</th><th scope=col>TV</th><th scope=col>radio</th><th scope=col>newspaper</th><th scope=col>sales</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;td&gt;1    &lt;/td&gt;&lt;td&gt;230.1&lt;/td&gt;&lt;td&gt;37.8 &lt;/td&gt;&lt;td&gt;69.2 &lt;/td&gt;&lt;td&gt;22.1 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;2    &lt;/td&gt;&lt;td&gt; 44.5&lt;/td&gt;&lt;td&gt;39.3 &lt;/td&gt;&lt;td&gt;45.1 &lt;/td&gt;&lt;td&gt;10.4 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;3    &lt;/td&gt;&lt;td&gt; 17.2&lt;/td&gt;&lt;td&gt;45.9 &lt;/td&gt;&lt;td&gt;69.3 &lt;/td&gt;&lt;td&gt; 9.3 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;4    &lt;/td&gt;&lt;td&gt;151.5&lt;/td&gt;&lt;td&gt;41.3 &lt;/td&gt;&lt;td&gt;58.5 &lt;/td&gt;&lt;td&gt;18.5 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;5    &lt;/td&gt;&lt;td&gt;180.8&lt;/td&gt;&lt;td&gt;10.8 &lt;/td&gt;&lt;td&gt;58.4 &lt;/td&gt;&lt;td&gt;12.9 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;6    &lt;/td&gt;&lt;td&gt;  8.7&lt;/td&gt;&lt;td&gt;48.9 &lt;/td&gt;&lt;td&gt;75.0 &lt;/td&gt;&lt;td&gt; 7.2 &lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><td>1    </td><td>230.1</td><td>37.8 </td><td>69.2 </td><td>22.1 </td></tr>
+    <tr><td>2    </td><td> 44.5</td><td>39.3 </td><td>45.1 </td><td>10.4 </td></tr>
+    <tr><td>3    </td><td> 17.2</td><td>45.9 </td><td>69.3 </td><td> 9.3 </td></tr>
+    <tr><td>4    </td><td>151.5</td><td>41.3 </td><td>58.5 </td><td>18.5 </td></tr>
+    <tr><td>5    </td><td>180.8</td><td>10.8 </td><td>58.4 </td><td>12.9 </td></tr>
+    <tr><td>6    </td><td>  8.7</td><td>48.9 </td><td>75.0 </td><td> 7.2 </td></tr>
 </tbody>
 </table>
+
 <div id="tv" class="section level4">
 <h4>（1）TV广告投入对销量影响</h4>
 <pre class="r"><code># TV, sales散点图
@@ -170,26 +154,17 @@ F-statistic: 570.3 on 3 and 196 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>TV、radio #### （4）计算参数估计得置信区间 TV: <span class="math inline">\(0.045765 \,(0.045765 \pm 1.96 \times 0.001395)\)</span>，其他同理。</p>
 <pre class="r"><code># 参数估计置信区间
 confint(fit)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th>
-</th>
-<th scope="col">
-2.5 %
-</th>
-<th scope="col">
-97.5 %
-</th>
-</tr>
-</thead>
+<thead><tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;th scope=row&gt;(Intercept)&lt;/th&gt;&lt;td&gt; 2.32376228&lt;/td&gt;&lt;td&gt;3.55401646 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;TV&lt;/th&gt;&lt;td&gt; 0.04301371&lt;/td&gt;&lt;td&gt;0.04851558 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;radio&lt;/th&gt;&lt;td&gt; 0.17154745&lt;/td&gt;&lt;td&gt;0.20551259 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;newspaper&lt;/th&gt;&lt;td&gt;-0.01261595&lt;/td&gt;&lt;td&gt;0.01054097 &lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><th scope=row>(Intercept)</th><td> 2.32376228</td><td>3.55401646 </td></tr>
+    <tr><th scope=row>TV</th><td> 0.04301371</td><td>0.04851558 </td></tr>
+    <tr><th scope=row>radio</th><td> 0.17154745</td><td>0.20551259 </td></tr>
+    <tr><th scope=row>newspaper</th><td>-0.01261595</td><td>0.01054097 </td></tr>
 </tbody>
 </table>
+
 </div>
 <div class="section level4">
 <h4>（5）对未来销售的预测精度如何？</h4>
@@ -241,62 +216,19 @@ library(&quot;MASS&quot;)</code></pre>
 <div class="section level3">
 <h3>波士顿房价数据集</h3>
 <pre class="r"><code>head(Boston)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th scope="col">
-crim
-</th>
-<th scope="col">
-zn
-</th>
-<th scope="col">
-indus
-</th>
-<th scope="col">
-chas
-</th>
-<th scope="col">
-nox
-</th>
-<th scope="col">
-rm
-</th>
-<th scope="col">
-age
-</th>
-<th scope="col">
-dis
-</th>
-<th scope="col">
-rad
-</th>
-<th scope="col">
-tax
-</th>
-<th scope="col">
-ptratio
-</th>
-<th scope="col">
-black
-</th>
-<th scope="col">
-lstat
-</th>
-<th scope="col">
-medv
-</th>
-</tr>
-</thead>
+<thead><tr><th scope=col>crim</th><th scope=col>zn</th><th scope=col>indus</th><th scope=col>chas</th><th scope=col>nox</th><th scope=col>rm</th><th scope=col>age</th><th scope=col>dis</th><th scope=col>rad</th><th scope=col>tax</th><th scope=col>ptratio</th><th scope=col>black</th><th scope=col>lstat</th><th scope=col>medv</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;td&gt;0.00632&lt;/td&gt;&lt;td&gt;18     &lt;/td&gt;&lt;td&gt;2.31   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.538  &lt;/td&gt;&lt;td&gt;6.575  &lt;/td&gt;&lt;td&gt;65.2   &lt;/td&gt;&lt;td&gt;4.0900 &lt;/td&gt;&lt;td&gt;1      &lt;/td&gt;&lt;td&gt;296    &lt;/td&gt;&lt;td&gt;15.3   &lt;/td&gt;&lt;td&gt;396.90 &lt;/td&gt;&lt;td&gt;4.98   &lt;/td&gt;&lt;td&gt;24.0   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;0.02731&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;7.07   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.469  &lt;/td&gt;&lt;td&gt;6.421  &lt;/td&gt;&lt;td&gt;78.9   &lt;/td&gt;&lt;td&gt;4.9671 &lt;/td&gt;&lt;td&gt;2      &lt;/td&gt;&lt;td&gt;242    &lt;/td&gt;&lt;td&gt;17.8   &lt;/td&gt;&lt;td&gt;396.90 &lt;/td&gt;&lt;td&gt;9.14   &lt;/td&gt;&lt;td&gt;21.6   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;0.02729&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;7.07   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.469  &lt;/td&gt;&lt;td&gt;7.185  &lt;/td&gt;&lt;td&gt;61.1   &lt;/td&gt;&lt;td&gt;4.9671 &lt;/td&gt;&lt;td&gt;2      &lt;/td&gt;&lt;td&gt;242    &lt;/td&gt;&lt;td&gt;17.8   &lt;/td&gt;&lt;td&gt;392.83 &lt;/td&gt;&lt;td&gt;4.03   &lt;/td&gt;&lt;td&gt;34.7   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;0.03237&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;2.18   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.458  &lt;/td&gt;&lt;td&gt;6.998  &lt;/td&gt;&lt;td&gt;45.8   &lt;/td&gt;&lt;td&gt;6.0622 &lt;/td&gt;&lt;td&gt;3      &lt;/td&gt;&lt;td&gt;222    &lt;/td&gt;&lt;td&gt;18.7   &lt;/td&gt;&lt;td&gt;394.63 &lt;/td&gt;&lt;td&gt;2.94   &lt;/td&gt;&lt;td&gt;33.4   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;0.06905&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;2.18   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.458  &lt;/td&gt;&lt;td&gt;7.147  &lt;/td&gt;&lt;td&gt;54.2   &lt;/td&gt;&lt;td&gt;6.0622 &lt;/td&gt;&lt;td&gt;3      &lt;/td&gt;&lt;td&gt;222    &lt;/td&gt;&lt;td&gt;18.7   &lt;/td&gt;&lt;td&gt;396.90 &lt;/td&gt;&lt;td&gt;5.33   &lt;/td&gt;&lt;td&gt;36.2   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;0.02985&lt;/td&gt;&lt;td&gt; 0     &lt;/td&gt;&lt;td&gt;2.18   &lt;/td&gt;&lt;td&gt;0      &lt;/td&gt;&lt;td&gt;0.458  &lt;/td&gt;&lt;td&gt;6.430  &lt;/td&gt;&lt;td&gt;58.7   &lt;/td&gt;&lt;td&gt;6.0622 &lt;/td&gt;&lt;td&gt;3      &lt;/td&gt;&lt;td&gt;222    &lt;/td&gt;&lt;td&gt;18.7   &lt;/td&gt;&lt;td&gt;394.12 &lt;/td&gt;&lt;td&gt;5.21   &lt;/td&gt;&lt;td&gt;28.7   &lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><td>0.00632</td><td>18     </td><td>2.31   </td><td>0      </td><td>0.538  </td><td>6.575  </td><td>65.2   </td><td>4.0900 </td><td>1      </td><td>296    </td><td>15.3   </td><td>396.90 </td><td>4.98   </td><td>24.0   </td></tr>
+    <tr><td>0.02731</td><td> 0     </td><td>7.07   </td><td>0      </td><td>0.469  </td><td>6.421  </td><td>78.9   </td><td>4.9671 </td><td>2      </td><td>242    </td><td>17.8   </td><td>396.90 </td><td>9.14   </td><td>21.6   </td></tr>
+    <tr><td>0.02729</td><td> 0     </td><td>7.07   </td><td>0      </td><td>0.469  </td><td>7.185  </td><td>61.1   </td><td>4.9671 </td><td>2      </td><td>242    </td><td>17.8   </td><td>392.83 </td><td>4.03   </td><td>34.7   </td></tr>
+    <tr><td>0.03237</td><td> 0     </td><td>2.18   </td><td>0      </td><td>0.458  </td><td>6.998  </td><td>45.8   </td><td>6.0622 </td><td>3      </td><td>222    </td><td>18.7   </td><td>394.63 </td><td>2.94   </td><td>33.4   </td></tr>
+    <tr><td>0.06905</td><td> 0     </td><td>2.18   </td><td>0      </td><td>0.458  </td><td>7.147  </td><td>54.2   </td><td>6.0622 </td><td>3      </td><td>222    </td><td>18.7   </td><td>396.90 </td><td>5.33   </td><td>36.2   </td></tr>
+    <tr><td>0.02985</td><td> 0     </td><td>2.18   </td><td>0      </td><td>0.458  </td><td>6.430  </td><td>58.7   </td><td>6.0622 </td><td>3      </td><td>222    </td><td>18.7   </td><td>394.12 </td><td>5.21   </td><td>28.7   </td></tr>
 </tbody>
 </table>
+
 <div id="-1" class="section level4">
 <h4>简单线性回归</h4>
 <p>将lstat（社会经济地位低的家庭所占比例）作为预测变量，medv（房价中位数）作为响应变量。</p>
@@ -322,88 +254,57 @@ Multiple R-squared:  0.5441,    Adjusted R-squared:  0.5432
 F-statistic: 601.6 on 1 and 504 DF,  p-value: &lt; 2.2e-16</code></pre>
 <pre class="r"><code># 模型储存的其他信息
 names(simple.lm)</code></pre>
-<ol class="list-inline">
-<pre><code>&lt;li&gt;&#39;coefficients&#39;&lt;/li&gt;
-&lt;li&gt;&#39;residuals&#39;&lt;/li&gt;
-&lt;li&gt;&#39;effects&#39;&lt;/li&gt;
-&lt;li&gt;&#39;rank&#39;&lt;/li&gt;
-&lt;li&gt;&#39;fitted.values&#39;&lt;/li&gt;
-&lt;li&gt;&#39;assign&#39;&lt;/li&gt;
-&lt;li&gt;&#39;qr&#39;&lt;/li&gt;
-&lt;li&gt;&#39;df.residual&#39;&lt;/li&gt;
-&lt;li&gt;&#39;xlevels&#39;&lt;/li&gt;
-&lt;li&gt;&#39;call&#39;&lt;/li&gt;
-&lt;li&gt;&#39;terms&#39;&lt;/li&gt;
-&lt;li&gt;&#39;model&#39;&lt;/li&gt;</code></pre>
+
+<ol class=list-inline>
+    <li>'coefficients'</li>
+    <li>'residuals'</li>
+    <li>'effects'</li>
+    <li>'rank'</li>
+    <li>'fitted.values'</li>
+    <li>'assign'</li>
+    <li>'qr'</li>
+    <li>'df.residual'</li>
+    <li>'xlevels'</li>
+    <li>'call'</li>
+    <li>'terms'</li>
+    <li>'model'</li>
 </ol>
+
 <pre class="r"><code># 参数置信区间
 confint(simple.lm)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th>
-</th>
-<th scope="col">
-2.5 %
-</th>
-<th scope="col">
-97.5 %
-</th>
-</tr>
-</thead>
+<thead><tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;th scope=row&gt;(Intercept)&lt;/th&gt;&lt;td&gt;33.448457 &lt;/td&gt;&lt;td&gt;35.6592247&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;lstat&lt;/th&gt;&lt;td&gt;-1.026148 &lt;/td&gt;&lt;td&gt;-0.8739505&lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><th scope=row>(Intercept)</th><td>33.448457 </td><td>35.6592247</td></tr>
+    <tr><th scope=row>lstat</th><td>-1.026148 </td><td>-0.8739505</td></tr>
 </tbody>
 </table>
+
 <pre class="r"><code># 根据给定的lstat值预测medv值,置信区间
 predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = &#39;confidence&#39;)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th>
-</th>
-<th scope="col">
-fit
-</th>
-<th scope="col">
-lwr
-</th>
-<th scope="col">
-upr
-</th>
-</tr>
-</thead>
+<thead><tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;th scope=row&gt;1&lt;/th&gt;&lt;td&gt;29.80359&lt;/td&gt;&lt;td&gt;29.00741&lt;/td&gt;&lt;td&gt;30.59978&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;2&lt;/th&gt;&lt;td&gt;25.05335&lt;/td&gt;&lt;td&gt;24.47413&lt;/td&gt;&lt;td&gt;25.63256&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;3&lt;/th&gt;&lt;td&gt;20.30310&lt;/td&gt;&lt;td&gt;19.73159&lt;/td&gt;&lt;td&gt;20.87461&lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><th scope=row>1</th><td>29.80359</td><td>29.00741</td><td>30.59978</td></tr>
+    <tr><th scope=row>2</th><td>25.05335</td><td>24.47413</td><td>25.63256</td></tr>
+    <tr><th scope=row>3</th><td>20.30310</td><td>19.73159</td><td>20.87461</td></tr>
 </tbody>
 </table>
+
 <pre class="r"><code># 根据给定的lstat值预测medv值,预测区间
 predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = &#39;prediction&#39;)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th>
-</th>
-<th scope="col">
-fit
-</th>
-<th scope="col">
-lwr
-</th>
-<th scope="col">
-upr
-</th>
-</tr>
-</thead>
+<thead><tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;th scope=row&gt;1&lt;/th&gt;&lt;td&gt;29.80359 &lt;/td&gt;&lt;td&gt;17.565675&lt;/td&gt;&lt;td&gt;42.04151 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;2&lt;/th&gt;&lt;td&gt;25.05335 &lt;/td&gt;&lt;td&gt;12.827626&lt;/td&gt;&lt;td&gt;37.27907 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;3&lt;/th&gt;&lt;td&gt;20.30310 &lt;/td&gt;&lt;td&gt; 8.077742&lt;/td&gt;&lt;td&gt;32.52846 &lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><th scope=row>1</th><td>29.80359 </td><td>17.565675</td><td>42.04151 </td></tr>
+    <tr><th scope=row>2</th><td>25.05335 </td><td>12.827626</td><td>37.27907 </td></tr>
+    <tr><th scope=row>3</th><td>20.30310 </td><td> 8.077742</td><td>32.52846 </td></tr>
 </tbody>
 </table>
+
 <pre class="r"><code># 散点图和最小二乘回归线
 plot(Boston$lstat, Boston$medv)
 abline(simple.lm, lwd = 3, col = &#39;red&#39;)</code></pre>
@@ -500,49 +401,53 @@ Residual standard error: 4.745 on 492 degrees of freedom
 Multiple R-squared:  0.7406,    Adjusted R-squared:  0.7338 
 F-statistic: 108.1 on 13 and 492 DF,  p-value: &lt; 2.2e-16</code></pre>
 <pre class="r"><code>names(mult.fit)</code></pre>
-<ol class="list-inline">
-<pre><code>&lt;li&gt;&#39;call&#39;&lt;/li&gt;
-&lt;li&gt;&#39;terms&#39;&lt;/li&gt;
-&lt;li&gt;&#39;residuals&#39;&lt;/li&gt;
-&lt;li&gt;&#39;coefficients&#39;&lt;/li&gt;
-&lt;li&gt;&#39;aliased&#39;&lt;/li&gt;
-&lt;li&gt;&#39;sigma&#39;&lt;/li&gt;
-&lt;li&gt;&#39;df&#39;&lt;/li&gt;
-&lt;li&gt;&#39;r.squared&#39;&lt;/li&gt;
-&lt;li&gt;&#39;adj.r.squared&#39;&lt;/li&gt;
-&lt;li&gt;&#39;fstatistic&#39;&lt;/li&gt;
-&lt;li&gt;&#39;cov.unscaled&#39;&lt;/li&gt;</code></pre>
+
+<ol class=list-inline>
+    <li>'call'</li>
+    <li>'terms'</li>
+    <li>'residuals'</li>
+    <li>'coefficients'</li>
+    <li>'aliased'</li>
+    <li>'sigma'</li>
+    <li>'df'</li>
+    <li>'r.squared'</li>
+    <li>'adj.r.squared'</li>
+    <li>'fstatistic'</li>
+    <li>'cov.unscaled'</li>
 </ol>
+
 <pre class="r"><code># 计算方差膨胀因子
 car::vif(mult.lm)</code></pre>
-<dl class="dl-horizontal">
-<pre><code>&lt;dt&gt;crim&lt;/dt&gt;
-    &lt;dd&gt;1.79219154743324&lt;/dd&gt;
-&lt;dt&gt;zn&lt;/dt&gt;
-    &lt;dd&gt;2.29875817874944&lt;/dd&gt;
-&lt;dt&gt;indus&lt;/dt&gt;
-    &lt;dd&gt;3.99159641834602&lt;/dd&gt;
-&lt;dt&gt;chas&lt;/dt&gt;
-    &lt;dd&gt;1.07399532755379&lt;/dd&gt;
-&lt;dt&gt;nox&lt;/dt&gt;
-    &lt;dd&gt;4.39371984757748&lt;/dd&gt;
-&lt;dt&gt;rm&lt;/dt&gt;
-    &lt;dd&gt;1.93374443578326&lt;/dd&gt;
-&lt;dt&gt;age&lt;/dt&gt;
-    &lt;dd&gt;3.10082551281533&lt;/dd&gt;
-&lt;dt&gt;dis&lt;/dt&gt;
-    &lt;dd&gt;3.95594490637272&lt;/dd&gt;
-&lt;dt&gt;rad&lt;/dt&gt;
-    &lt;dd&gt;7.48449633527445&lt;/dd&gt;
-&lt;dt&gt;tax&lt;/dt&gt;
-    &lt;dd&gt;9.00855394759706&lt;/dd&gt;
-&lt;dt&gt;ptratio&lt;/dt&gt;
-    &lt;dd&gt;1.79908404924889&lt;/dd&gt;
-&lt;dt&gt;black&lt;/dt&gt;
-    &lt;dd&gt;1.34852107640637&lt;/dd&gt;
-&lt;dt&gt;lstat&lt;/dt&gt;
-    &lt;dd&gt;2.94149107809193&lt;/dd&gt;</code></pre>
+
+<dl class=dl-horizontal>
+    <dt>crim</dt>
+        <dd>1.79219154743324</dd>
+    <dt>zn</dt>
+        <dd>2.29875817874944</dd>
+    <dt>indus</dt>
+        <dd>3.99159641834602</dd>
+    <dt>chas</dt>
+        <dd>1.07399532755379</dd>
+    <dt>nox</dt>
+        <dd>4.39371984757748</dd>
+    <dt>rm</dt>
+        <dd>1.93374443578326</dd>
+    <dt>age</dt>
+        <dd>3.10082551281533</dd>
+    <dt>dis</dt>
+        <dd>3.95594490637272</dd>
+    <dt>rad</dt>
+        <dd>7.48449633527445</dd>
+    <dt>tax</dt>
+        <dd>9.00855394759706</dd>
+    <dt>ptratio</dt>
+        <dd>1.79908404924889</dd>
+    <dt>black</dt>
+        <dd>1.34852107640637</dd>
+    <dt>lstat</dt>
+        <dd>2.94149107809193</dd>
 </dl>
+
 <div id="age" class="section level5">
 <h5>去除age变量后回归</h5>
 <pre class="r"><code>mult.lm2 &lt;- lm(medv ~ . -age, data = Boston)
@@ -641,34 +546,15 @@ F-statistic: 448.5 on 2 and 503 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="section level5">
 <h5>比较两模型</h5>
 <pre class="r"><code>anova(lm(medv ~ lstat, data = Boston), fit2)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th scope="col">
-Res.Df
-</th>
-<th scope="col">
-RSS
-</th>
-<th scope="col">
-Df
-</th>
-<th scope="col">
-Sum of Sq
-</th>
-<th scope="col">
-F
-</th>
-<th scope="col">
-Pr(&gt;F)
-</th>
-</tr>
-</thead>
+<thead><tr><th scope=col>Res.Df</th><th scope=col>RSS</th><th scope=col>Df</th><th scope=col>Sum of Sq</th><th scope=col>F</th><th scope=col>Pr(&gt;F)</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;td&gt;504         &lt;/td&gt;&lt;td&gt;19472.38    &lt;/td&gt;&lt;td&gt;NA          &lt;/td&gt;&lt;td&gt;      NA    &lt;/td&gt;&lt;td&gt;      NA    &lt;/td&gt;&lt;td&gt;          NA&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;503         &lt;/td&gt;&lt;td&gt;15347.24    &lt;/td&gt;&lt;td&gt; 1          &lt;/td&gt;&lt;td&gt;4125.138    &lt;/td&gt;&lt;td&gt;135.1998    &lt;/td&gt;&lt;td&gt;7.630116e-28&lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><td>504         </td><td>19472.38    </td><td>NA          </td><td>      NA    </td><td>      NA    </td><td>          NA</td></tr>
+    <tr><td>503         </td><td>15347.24    </td><td> 1          </td><td>4125.138    </td><td>135.1998    </td><td>7.630116e-28</td></tr>
 </tbody>
 </table>
+
 <p>绘制残差图，残差规律很少</p>
 <pre class="r"><code>par(mfrow = c(2, 2))
 plot(fit2)</code></pre>
@@ -685,74 +571,32 @@ plot(fit2)</code></pre>
 <p>预测400个地区的Sales（儿童座椅销量），Shelveloc（每个地区搁架位置的质量指标），为分类的定性变量。</p>
 <pre class="r"><code>Carseats &lt;- ISLR::Carseats
 head(Carseats)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th scope="col">
-Sales
-</th>
-<th scope="col">
-CompPrice
-</th>
-<th scope="col">
-Income
-</th>
-<th scope="col">
-Advertising
-</th>
-<th scope="col">
-Population
-</th>
-<th scope="col">
-Price
-</th>
-<th scope="col">
-ShelveLoc
-</th>
-<th scope="col">
-Age
-</th>
-<th scope="col">
-Education
-</th>
-<th scope="col">
-Urban
-</th>
-<th scope="col">
-US
-</th>
-</tr>
-</thead>
+<thead><tr><th scope=col>Sales</th><th scope=col>CompPrice</th><th scope=col>Income</th><th scope=col>Advertising</th><th scope=col>Population</th><th scope=col>Price</th><th scope=col>ShelveLoc</th><th scope=col>Age</th><th scope=col>Education</th><th scope=col>Urban</th><th scope=col>US</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;td&gt; 9.50 &lt;/td&gt;&lt;td&gt;138   &lt;/td&gt;&lt;td&gt; 73   &lt;/td&gt;&lt;td&gt;11    &lt;/td&gt;&lt;td&gt;276   &lt;/td&gt;&lt;td&gt;120   &lt;/td&gt;&lt;td&gt;Bad   &lt;/td&gt;&lt;td&gt;42    &lt;/td&gt;&lt;td&gt;17    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;11.22 &lt;/td&gt;&lt;td&gt;111   &lt;/td&gt;&lt;td&gt; 48   &lt;/td&gt;&lt;td&gt;16    &lt;/td&gt;&lt;td&gt;260   &lt;/td&gt;&lt;td&gt; 83   &lt;/td&gt;&lt;td&gt;Good  &lt;/td&gt;&lt;td&gt;65    &lt;/td&gt;&lt;td&gt;10    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;10.06 &lt;/td&gt;&lt;td&gt;113   &lt;/td&gt;&lt;td&gt; 35   &lt;/td&gt;&lt;td&gt;10    &lt;/td&gt;&lt;td&gt;269   &lt;/td&gt;&lt;td&gt; 80   &lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;59    &lt;/td&gt;&lt;td&gt;12    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt; 7.40 &lt;/td&gt;&lt;td&gt;117   &lt;/td&gt;&lt;td&gt;100   &lt;/td&gt;&lt;td&gt; 4    &lt;/td&gt;&lt;td&gt;466   &lt;/td&gt;&lt;td&gt; 97   &lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;55    &lt;/td&gt;&lt;td&gt;14    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt; 4.15 &lt;/td&gt;&lt;td&gt;141   &lt;/td&gt;&lt;td&gt; 64   &lt;/td&gt;&lt;td&gt; 3    &lt;/td&gt;&lt;td&gt;340   &lt;/td&gt;&lt;td&gt;128   &lt;/td&gt;&lt;td&gt;Bad   &lt;/td&gt;&lt;td&gt;38    &lt;/td&gt;&lt;td&gt;13    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;td&gt;No    &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;10.81 &lt;/td&gt;&lt;td&gt;124   &lt;/td&gt;&lt;td&gt;113   &lt;/td&gt;&lt;td&gt;13    &lt;/td&gt;&lt;td&gt;501   &lt;/td&gt;&lt;td&gt; 72   &lt;/td&gt;&lt;td&gt;Bad   &lt;/td&gt;&lt;td&gt;78    &lt;/td&gt;&lt;td&gt;16    &lt;/td&gt;&lt;td&gt;No    &lt;/td&gt;&lt;td&gt;Yes   &lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><td> 9.50 </td><td>138   </td><td> 73   </td><td>11    </td><td>276   </td><td>120   </td><td>Bad   </td><td>42    </td><td>17    </td><td>Yes   </td><td>Yes   </td></tr>
+    <tr><td>11.22 </td><td>111   </td><td> 48   </td><td>16    </td><td>260   </td><td> 83   </td><td>Good  </td><td>65    </td><td>10    </td><td>Yes   </td><td>Yes   </td></tr>
+    <tr><td>10.06 </td><td>113   </td><td> 35   </td><td>10    </td><td>269   </td><td> 80   </td><td>Medium</td><td>59    </td><td>12    </td><td>Yes   </td><td>Yes   </td></tr>
+    <tr><td> 7.40 </td><td>117   </td><td>100   </td><td> 4    </td><td>466   </td><td> 97   </td><td>Medium</td><td>55    </td><td>14    </td><td>Yes   </td><td>Yes   </td></tr>
+    <tr><td> 4.15 </td><td>141   </td><td> 64   </td><td> 3    </td><td>340   </td><td>128   </td><td>Bad   </td><td>38    </td><td>13    </td><td>Yes   </td><td>No    </td></tr>
+    <tr><td>10.81 </td><td>124   </td><td>113   </td><td>13    </td><td>501   </td><td> 72   </td><td>Bad   </td><td>78    </td><td>16    </td><td>No    </td><td>Yes   </td></tr>
 </tbody>
 </table>
+
+
 <pre class="r"><code># 编码规则
 contrasts(Carseats$ShelveLoc)</code></pre>
+
 <table>
-<thead>
-<tr>
-<th>
-</th>
-<th scope="col">
-Good
-</th>
-<th scope="col">
-Medium
-</th>
-</tr>
-</thead>
+<thead><tr><th></th><th scope=col>Good</th><th scope=col>Medium</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;th scope=row&gt;Bad&lt;/th&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;Good&lt;/th&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;Medium&lt;/th&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><th scope=row>Bad</th><td>0</td><td>0</td></tr>
+    <tr><th scope=row>Good</th><td>1</td><td>0</td></tr>
+    <tr><th scope=row>Medium</th><td>0</td><td>1</td></tr>
 </tbody>
 </table>
+
 <pre class="r"><code># 拟合交互项模型
 lm(Sales ~ . + Income : Advertising + Price : Age, data = Carseats) %&gt;% summary</code></pre>
 <pre><code>Call:
@@ -905,30 +749,15 @@ F-statistic: 350.7 on 1 and 99 DF,  p-value: &lt; 2.2e-16</code></pre>
 ex11.fit2 &lt;- lm(x ~ y)
 
 summary(ex11.fit1)$coefficients</code></pre>
+
 <table>
-<thead>
-<tr>
-<th>
-</th>
-<th scope="col">
-Estimate
-</th>
-<th scope="col">
-Std. Error
-</th>
-<th scope="col">
-t value
-</th>
-<th scope="col">
-Pr(&gt;|t|)
-</th>
-</tr>
-</thead>
+<thead><tr><th></th><th scope=col>Estimate</th><th scope=col>Std. Error</th><th scope=col>t value</th><th scope=col>Pr(&gt;|t|)</th></tr></thead>
 <tbody>
-<pre><code>&lt;tr&gt;&lt;th scope=row&gt;(Intercept)&lt;/th&gt;&lt;td&gt;-0.03769261 &lt;/td&gt;&lt;td&gt;0.09698729  &lt;/td&gt;&lt;td&gt;-0.3886346  &lt;/td&gt;&lt;td&gt;6.983896e-01&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;th scope=row&gt;x&lt;/th&gt;&lt;td&gt; 1.99893961 &lt;/td&gt;&lt;td&gt;0.10772703  &lt;/td&gt;&lt;td&gt;18.5555993  &lt;/td&gt;&lt;td&gt;7.723851e-34&lt;/td&gt;&lt;/tr&gt;</code></pre>
+    <tr><th scope=row>(Intercept)</th><td>-0.03769261 </td><td>0.09698729  </td><td>-0.3886346  </td><td>6.983896e-01</td></tr>
+    <tr><th scope=row>x</th><td> 1.99893961 </td><td>0.10772703  </td><td>18.5555993  </td><td>7.723851e-34</td></tr>
 </tbody>
 </table>
+
 <pre class="r"><code>summary(ex11.fit2)$coefficients</code></pre>
 <table>
 <thead>

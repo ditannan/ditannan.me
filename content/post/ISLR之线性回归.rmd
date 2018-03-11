@@ -88,7 +88,7 @@ advdf <- read.csv('Advertising.csv')
 head(advdf)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>X</th><th scope=col>TV</th><th scope=col>radio</th><th scope=col>newspaper</th><th scope=col>sales</th></tr></thead>
 <tbody>
@@ -100,7 +100,7 @@ head(advdf)
     <tr><td>6    </td><td>  8.7</td><td>48.9 </td><td>75.0 </td><td> 7.2 </td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 #### （1）TV广告投入对销量影响
@@ -167,7 +167,7 @@ TV: $0.045765 \,(0.045765 \pm 1.96 \times 0.001395)$，其他同理。
 # 参数估计置信区间
 confint(fit)
 ```
-
+<!--html_preserve-->
 <table>
 <thead><tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr></thead>
 <tbody>
@@ -177,7 +177,7 @@ confint(fit)
     <tr><th scope=row>newspaper</th><td>-0.01261595</td><td>0.01054097 </td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 #### （5）对未来销售的预测精度如何？
@@ -250,7 +250,7 @@ library("MASS")
 head(Boston)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>crim</th><th scope=col>zn</th><th scope=col>indus</th><th scope=col>chas</th><th scope=col>nox</th><th scope=col>rm</th><th scope=col>age</th><th scope=col>dis</th><th scope=col>rad</th><th scope=col>tax</th><th scope=col>ptratio</th><th scope=col>black</th><th scope=col>lstat</th><th scope=col>medv</th></tr></thead>
 <tbody>
@@ -262,7 +262,7 @@ head(Boston)
     <tr><td>0.02985</td><td> 0     </td><td>2.18   </td><td>0      </td><td>0.458  </td><td>6.430  </td><td>58.7   </td><td>6.0622 </td><td>3      </td><td>222    </td><td>18.7   </td><td>394.12 </td><td>5.21   </td><td>28.7   </td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 #### 简单线性回归
@@ -303,7 +303,7 @@ simple.fit
 names(simple.lm)
 ```
 
-
+<!--html_preserve-->
 <ol class=list-inline>
     <li>'coefficients'</li>
     <li>'residuals'</li>
@@ -318,7 +318,7 @@ names(simple.lm)
     <li>'terms'</li>
     <li>'model'</li>
 </ol>
-
+<!--/html_preserve-->
 
 
 
@@ -327,7 +327,7 @@ names(simple.lm)
 confint(simple.lm)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th></th><th scope=col>2.5 %</th><th scope=col>97.5 %</th></tr></thead>
 <tbody>
@@ -335,7 +335,7 @@ confint(simple.lm)
     <tr><th scope=row>lstat</th><td>-1.026148 </td><td>-0.8739505</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 
@@ -344,7 +344,7 @@ confint(simple.lm)
 predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = 'confidence')
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr></thead>
 <tbody>
@@ -353,7 +353,7 @@ predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = 'confidence')
     <tr><th scope=row>3</th><td>20.30310</td><td>19.73159</td><td>20.87461</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 
@@ -362,7 +362,7 @@ predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = 'confidence')
 predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = 'prediction')
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th></th><th scope=col>fit</th><th scope=col>lwr</th><th scope=col>upr</th></tr></thead>
 <tbody>
@@ -371,7 +371,7 @@ predict(simple.lm, data.frame(lstat = c(5, 10, 15)), interval = 'prediction')
     <tr><th scope=row>3</th><td>20.30310 </td><td> 8.077742</td><td>32.52846 </td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 
@@ -507,7 +507,7 @@ mult.fit
 names(mult.fit)
 ```
 
-
+<!--html_preserve-->
 <ol class=list-inline>
     <li>'call'</li>
     <li>'terms'</li>
@@ -521,7 +521,7 @@ names(mult.fit)
     <li>'fstatistic'</li>
     <li>'cov.unscaled'</li>
 </ol>
-
+<!--/html_preserve-->
 
 
 
@@ -530,7 +530,7 @@ names(mult.fit)
 car::vif(mult.lm)
 ```
 
-
+<!--html_preserve-->
 <dl class=dl-horizontal>
     <dt>crim</dt>
         <dd>1.79219154743324</dd>
@@ -559,7 +559,7 @@ car::vif(mult.lm)
     <dt>lstat</dt>
         <dd>2.94149107809193</dd>
 </dl>
-
+<!--/html_preserve-->
 
 
 ##### 去除age变量后回归
@@ -690,7 +690,7 @@ fit2 %>% summary
 anova(lm(medv ~ lstat, data = Boston), fit2)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>Res.Df</th><th scope=col>RSS</th><th scope=col>Df</th><th scope=col>Sum of Sq</th><th scope=col>F</th><th scope=col>Pr(&gt;F)</th></tr></thead>
 <tbody>
@@ -698,7 +698,7 @@ anova(lm(medv ~ lstat, data = Boston), fit2)
     <tr><td>503         </td><td>15347.24    </td><td> 1          </td><td>4125.138    </td><td>135.1998    </td><td>7.630116e-28</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 绘制残差图，残差规律很少
@@ -723,6 +723,7 @@ plot(fit2)
 Carseats <- ISLR::Carseats
 head(Carseats)
 ```
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>Sales</th><th scope=col>CompPrice</th><th scope=col>Income</th><th scope=col>Advertising</th><th scope=col>Population</th><th scope=col>Price</th><th scope=col>ShelveLoc</th><th scope=col>Age</th><th scope=col>Education</th><th scope=col>Urban</th><th scope=col>US</th></tr></thead>
 <tbody>
@@ -735,7 +736,7 @@ head(Carseats)
 </tbody>
 </table>
 
-
+<!--/html_preserve-->
 
 
 ```R
@@ -743,7 +744,7 @@ head(Carseats)
 contrasts(Carseats$ShelveLoc)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th></th><th scope=col>Good</th><th scope=col>Medium</th></tr></thead>
 <tbody>
@@ -752,7 +753,7 @@ contrasts(Carseats$ShelveLoc)
     <tr><th scope=row>Medium</th><td>0</td><td>1</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 
@@ -972,7 +973,7 @@ ex11.fit2 <- lm(x ~ y)
 summary(ex11.fit1)$coefficients
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th></th><th scope=col>Estimate</th><th scope=col>Std. Error</th><th scope=col>t value</th><th scope=col>Pr(&gt;|t|)</th></tr></thead>
 <tbody>
@@ -980,7 +981,7 @@ summary(ex11.fit1)$coefficients
     <tr><th scope=row>x</th><td> 1.99893961 </td><td>0.10772703  </td><td>18.5555993  </td><td>7.723851e-34</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 
