@@ -1,0 +1,44 @@
+---
+title: 查看安装的R包
+author: Delta
+date: '2018-03-11'
+slug: 查看安装的r包
+categories:
+  - R tips
+tags:
+  - R
+description: ''
+---
+
+
+
+<div class="section level1">
+<h1>前言</h1>
+<p>在使用R时，经常会碰到这种情况，要用一个包的时候，不知道有没有安装这个包，或者我们要看下我们都安装了哪些包，该怎么看呢？</p>
+</div>
+<div class="section level1">
+<h1>开工</h1>
+<p>我们在调用包时，如果提示我们没有这个包，那说明我们要安装了：</p>
+<pre class="r"><code>library(tidycf)</code></pre>
+<blockquote>
+<p>Error in library(tidycf) : 不存在叫‘tidycf’这个名字的程辑包</p>
+</blockquote>
+<p>这时候我们就要安装了，这种方式呢，有没有感觉一种失落感，别人告诉你没装，你再去安装。我们其实也是可以自己去检查是否安装了的。</p>
+<p>方法有好几种，一种是点击<code>Console</code>右边面板中的<code>Packages</code>看有没有安装的包。但这样显然费劲，能敲键盘用代码解决的就不要去点击鼠标了。</p>
+<p>查看我们安装包的方法有两种：</p>
+<pre class="r"><code>installed.packages()
+.packages(TRUE)</code></pre>
+<p>这两个函数都能把我们所安装的包显示出来，那再看我们是否安装某个包就只要看这个包是否在安装了的包里面了。</p>
+<pre class="r"><code>&#39;tidycf&#39; %in% .packages(TRUE)
+#&gt; [1] FALSE</code></pre>
+<pre class="r"><code>&#39;tidycf&#39; %in% installed.packages()
+#&gt; [1] FALSE</code></pre>
+<p>接着我们就愉快的安装吧。我们来看一个已经安装了的包：</p>
+<pre class="r"><code>&#39;ggplot2&#39; %in% .packages(TRUE)
+#&gt; [1] TRUE</code></pre>
+<p>记得将包名字用引号括起来，因为是检查这个字符串是否在后面的列表中。</p>
+</div>
+<div class="section level1">
+<h1>收工</h1>
+<p>Peace out……</p>
+</div>

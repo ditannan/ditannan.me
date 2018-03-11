@@ -9,6 +9,10 @@ tags:
   - R
 description: ''
 ---
+```{r setup, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(collapse = T, comment = '#>')
+```
+
 
 # 前言
 
@@ -17,9 +21,10 @@ description: ''
 # 开工
 
 我们在调用包时，如果提示我们没有这个包，那说明我们要安装了：
-```{r}
+```r
 library(tidycf)
 ```
+> Error in library(tidycf) : 不存在叫‘tidycf’这个名字的程辑包
 
 这时候我们就要安装了，这种方式呢，有没有感觉一种失落感，别人告诉你没装，你再去安装。我们其实也是可以自己去检查是否安装了的。
 
