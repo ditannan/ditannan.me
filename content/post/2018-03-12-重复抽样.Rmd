@@ -1,0 +1,249 @@
+---
+title: 重复抽样
+author: Delta
+date: '2018-03-12'
+slug: 重复抽样
+categories:
+  - 统计
+tags:
+  - ISLR
+  - R
+  - boot
+  - KNN
+description: ''
+---
+
+原书地址[An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)
+
+```{r setup, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(comment = '#>', collapse = T)
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+```
+
+
+# 交叉验证法和自助法
+首先，载入包：
+
+```{r, warning=FALSE}
+library(ISLR)
+library(magrittr)
+library(boot)
+```
+
+设定了种子为1。选定训练集,并看看数据集长啥样：
+
+```{r, warning=FALSE}
+set.seed(1)
+train <- sample(392, 196)
+head(Auto)
+```
+
+使用训练集拟合一个线性回归模型:
+
+```{r}
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+summary(lm.fit)
+```
+
+看看验证集上的效果如何，计算均方误差再取平均：
+
+```{r}
+(Auto$mpg - predict(lm.fit, Auto))[-train]^2 %>% mean()
+```
+
+因此，用线性回归模型所产生的测试均方误差估计为26.14。下面用`ploy()`函数来估计用二次和三次多项式回归所产生的测试误差。
+
+```{r}
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+summary(lm.fit2)
+```
+
+可以看到两次项也是有意义的，看看验证集上均方误差：
+
+```{r}
+(Auto$mpg - predict(lm.fit2, Auto))[-train]^2 %>% mean()
+```
+
+可以看到误差减小了。再看看三次方：
+
+```{r}
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+summary(lm.fit3)
+```
+
+三次方是没有统计学意义的，看看再验证集上效果：
+
+```{r}
+(Auto$mpg - predict(lm.fit3, Auto))[-train]^2 %>% mean()
+```
+
+改变不是很大。
+我们换个种子看看会怎样：
+
+```{r}
+set.seed(2)
+train <- sample(392, 196)
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+(Auto$mpg - predict(lm.fit, Auto))[-train]^2 %>% mean()
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+(Auto$mpg - predict(lm.fit2, Auto))[-train]^2 %>% mean()
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+(Auto$mpg - predict(lm.fit3, Auto))[-train]^2 %>% mean()
+```
+
+看吧，和之前结果基本一致，二次项拟合得模型较好，三次项就没啥变化了。
+
+
+# 留一交叉验证法
+对于任意一个广义线性模型，都可以用`glm()`和`cv.glm()`函数来自动计算其LOOCV估计。`glm()`函数中有个参数`family=`可以设定模型类型，如选择`'binomial'`执行logistic回归。而如果不设定该参数的话，就和`lm()`结果一致。如下：
+
+```{r}
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+coef(glm.fit)
+lm.fit <- lm(mpg ~ horsepower, data = Auto)
+coef(lm.fit)
+```
+
+而`glm()`可以和`cv.glm()`一起使用，其是`boot`包中函数。
+
+```{r}
+library(boot)
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+cv.err <- cv.glm(Auto, glm.fit)
+str(cv.err)
+cv.err$delta
+```
+
+交叉验证结果如上所示。第一个数是k折CV估计，第二个数字是偏差校正后的结果。
+下面用多项式来拟合多项式回归模型，计算相应的交叉验证误差：
+
+```{r}
+cv.error <- rep(0, 5)
+for(i in 1 : 5) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+```
+
+可以看到在二次项以后几乎就没啥改善了。
+
+# K折交叉验证
+`cv.glm()`同样可以用于实现k折CV。下面令k=10，进行k折交叉验证。下面计算一次到十次多项式拟合模型所产生的CV误差。
+
+```{r}
+set.seed(17)
+cv.error.10 <- rep(0, 10)
+for(i in 1 : 10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
+}
+cv.error.10
+```
+
+还是不能说明使用大于二次的模型效果更好。
+
+# 自助法
+使用自助法的两个步骤：
+- 创建一个计算感兴趣的统计量的函数
+- 用boot库中的`boot()`函数，通过反复地从数据集汇中有放回的抽取观测来执行
+
+## 例
+假设希望用一笔固定数额的钱对于两个分别收益为X和Y的金融资产进行投资，其中X和Y是随机变量。打算把所有钱的百分比是$\alpha$的部分投资到X，把剩下是$1-\alpha$部分投资到Y。由于这两笔投资的收益存在波动性，所以希望选择一个$\alpha$，使得投资的总风险或者说方差最小。即使$Var(\alpha X+(1-\alpha)Y)$最小。使得最小的$\alpha$值为：
+$$\alpha = \frac{\sigma_Y^2-\sigma_{XY}}{\sigma_X^2+\sigma_Y^2-2\sigma_{XY}}$$
+其中，$\sigma_X^2=Var(X)$，$\sigma_Y^2=Var(Y)$，$\sigma_{XY}=Cov(X,Y)$
+
+先看下数据集样子：
+```{r}
+head(Portfolio)
+```
+
+然后，定义求$\alpha$函数。
+```{r}
+alpha.fn <- function(data, index) {
+  X <- data$X[index]
+  Y <- data$Y[index]
+  alpha <- (var(Y) - cov(X, Y)) / (var(X) + var(Y) - 2 * cov(X, Y))
+  return(alpha)
+}
+```
+
+先用所有数据求一下$\alpha$。
+```{r}
+alpha.fn(Portfolio, 1 : 100)
+```
+
+下面随机的从1到100中有放回的选取100个观测，相当于创建一个新的自助法数据集，然后再新的数据集上重新计算$\hat\alpha$。
+```{r}
+set.seed(1)
+alpha.fn(Portfolio, sample(100, 100, replace = TRUE))
+```
+
+可以通过多次运行，记录相应的$\alpha$，然后计算其标准差，实现自助法分析。而这一过程可以通过`boot()`函数实现，下面产生1000个$\alpha$自助法估计。
+```{r}
+boot(Portfolio, alpha.fn, R = 1000)
+```
+
+结果表明，对于原始数据，$\hat\alpha=0.5758，SE(\hat\alpha)=0.0886$。
+
+## 估计线性回归模型的精度
+自助法可以用来衡量一种统计学习方法的估计和预测的系统的波动性。来估计一下$\beta_0$和$\beta_1$的波动性。先定义输出$\beta_0$和$\beta_1$函数：
+```{r}
+boot.fn <- function(data, index) {
+  lm(mpg ~ horsepower, data = Auto, subset = index) %>% 
+    coef() %>% 
+    return()
+}
+```
+
+使用所有数据集看下结果：
+```{r}
+boot.fn(Auto, 1 : nrow(Auto))
+```
+
+可以通过抽样产生其中一个样本的估计值：
+```{r}
+boot.fn(Auto, sample(nrow(Auto), nrow(Auto), replace = TRUE))
+```
+
+下面使用`boot()`函数进行估计：
+```{r}
+boot(Auto, boot.fn, R = 1000)
+```
+
+可以看到进行1000次boot抽样后$\hat\beta_0=39.935$和$\hat\beta_1=-0.157$，误差为0.86和0.007。
+我们看下用`lm()`输出的结果：
+```{r}
+lm(mpg ~ horsepower, data = Auto) %>% 
+  summary() %>% 
+  .$coef
+```
+
+均数的估计是一样的，标准误的估计有一丝的差别，因为线性回归的估计是依赖于线性回归模型，是有前提条件的。而自助法不依赖于这些假设，更加准确。
+
+下面计算对数据拟合二次模型所得到的的标准线性回归系数的估计和标准误差的自助估计。
+
+```{r}
+boot.fn <- function(data, index) {
+  lm(mpg ~ horsepower + I(horsepower^2), data = Auto, subset = index) %>% 
+    coef() %>% 
+    return()
+}
+```
+
+看下自助法估计得值：
+```{r}
+set.seed(1)
+boot(Auto, boot.fn, R = 1000)
+```
+
+看下线性回归模型的估计值：
+
+```{r}
+lm(mpg ~ horsepower + I(horsepower^2), data = Auto) %>% 
+  summary() %>% 
+  .$coef
+```
+
+差别就很小了。
+Peace out……

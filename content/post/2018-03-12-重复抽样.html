@@ -1,0 +1,293 @@
+---
+title: 重复抽样
+author: Delta
+date: '2018-03-12'
+slug: 重复抽样
+categories:
+  - 统计
+tags:
+  - ISLR
+  - R
+  - boot
+  - KNN
+description: ''
+---
+
+
+
+<p>原书地址<a href="http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning</a></p>
+<div class="section level1">
+<h1>交叉验证法和自助法</h1>
+<p>首先，载入包：</p>
+<pre class="r"><code>library(ISLR)
+library(magrittr)
+library(boot)</code></pre>
+<p>设定了种子为1。选定训练集,并看看数据集长啥样：</p>
+<pre class="r"><code>set.seed(1)
+train &lt;- sample(392, 196)
+head(Auto)
+#&gt;   mpg cylinders displacement horsepower weight acceleration year origin
+#&gt; 1  18         8          307        130   3504         12.0   70      1
+#&gt; 2  15         8          350        165   3693         11.5   70      1
+#&gt; 3  18         8          318        150   3436         11.0   70      1
+#&gt; 4  16         8          304        150   3433         12.0   70      1
+#&gt; 5  17         8          302        140   3449         10.5   70      1
+#&gt; 6  15         8          429        198   4341         10.0   70      1
+#&gt;                        name
+#&gt; 1 chevrolet chevelle malibu
+#&gt; 2         buick skylark 320
+#&gt; 3        plymouth satellite
+#&gt; 4             amc rebel sst
+#&gt; 5               ford torino
+#&gt; 6          ford galaxie 500</code></pre>
+<p>使用训练集拟合一个线性回归模型:</p>
+<pre class="r"><code>lm.fit &lt;- lm(mpg ~ horsepower, data = Auto, subset = train)
+summary(lm.fit)
+#&gt; 
+#&gt; Call:
+#&gt; lm(formula = mpg ~ horsepower, data = Auto, subset = train)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -13.698  -3.085  -0.216   2.680  16.770 
+#&gt; 
+#&gt; Coefficients:
+#&gt;              Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept) 40.340377   1.002269   40.25   &lt;2e-16 ***
+#&gt; horsepower  -0.161701   0.008809  -18.36   &lt;2e-16 ***
+#&gt; ---
+#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+#&gt; 
+#&gt; Residual standard error: 4.692 on 194 degrees of freedom
+#&gt; Multiple R-squared:  0.6346, Adjusted R-squared:  0.6327 
+#&gt; F-statistic: 336.9 on 1 and 194 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>看看验证集上的效果如何，计算均方误差再取平均：</p>
+<pre class="r"><code>(Auto$mpg - predict(lm.fit, Auto))[-train]^2 %&gt;% mean()
+#&gt; [1] 26.14142</code></pre>
+<p>因此，用线性回归模型所产生的测试均方误差估计为26.14。下面用<code>ploy()</code>函数来估计用二次和三次多项式回归所产生的测试误差。</p>
+<pre class="r"><code>lm.fit2 &lt;- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+summary(lm.fit2)
+#&gt; 
+#&gt; Call:
+#&gt; lm(formula = mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+#&gt; 
+#&gt; Residuals:
+#&gt;      Min       1Q   Median       3Q      Max 
+#&gt; -14.8507  -2.6415  -0.0274   2.2932  14.7340 
+#&gt; 
+#&gt; Coefficients:
+#&gt;                       Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)            23.5985     0.3097  76.209  &lt; 2e-16 ***
+#&gt; poly(horsepower, 2)1 -122.1375     6.1609 -19.825  &lt; 2e-16 ***
+#&gt; poly(horsepower, 2)2   40.1992     6.6161   6.076 6.45e-09 ***
+#&gt; ---
+#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+#&gt; 
+#&gt; Residual standard error: 4.31 on 193 degrees of freedom
+#&gt; Multiple R-squared:  0.6933, Adjusted R-squared:  0.6901 
+#&gt; F-statistic: 218.1 on 2 and 193 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>可以看到两次项也是有意义的，看看验证集上均方误差：</p>
+<pre class="r"><code>(Auto$mpg - predict(lm.fit2, Auto))[-train]^2 %&gt;% mean()
+#&gt; [1] 19.82259</code></pre>
+<p>可以看到误差减小了。再看看三次方：</p>
+<pre class="r"><code>lm.fit3 &lt;- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+summary(lm.fit3)
+#&gt; 
+#&gt; Call:
+#&gt; lm(formula = mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+#&gt; 
+#&gt; Residuals:
+#&gt;      Min       1Q   Median       3Q      Max 
+#&gt; -14.8585  -2.5255  -0.0775   2.3203  14.6420 
+#&gt; 
+#&gt; Coefficients:
+#&gt;                       Estimate Std. Error t value Pr(&gt;|t|)    
+#&gt; (Intercept)            23.5958     0.3104  76.020  &lt; 2e-16 ***
+#&gt; poly(horsepower, 3)1 -122.6430     6.2936 -19.487  &lt; 2e-16 ***
+#&gt; poly(horsepower, 3)2   40.0361     6.6421   6.028 8.36e-09 ***
+#&gt; poly(horsepower, 3)3   -2.8160     6.7978  -0.414    0.679    
+#&gt; ---
+#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+#&gt; 
+#&gt; Residual standard error: 4.319 on 192 degrees of freedom
+#&gt; Multiple R-squared:  0.6935, Adjusted R-squared:  0.6888 
+#&gt; F-statistic: 144.8 on 3 and 192 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>三次方是没有统计学意义的，看看再验证集上效果：</p>
+<pre class="r"><code>(Auto$mpg - predict(lm.fit3, Auto))[-train]^2 %&gt;% mean()
+#&gt; [1] 19.78252</code></pre>
+<p>改变不是很大。 我们换个种子看看会怎样：</p>
+<pre class="r"><code>set.seed(2)
+train &lt;- sample(392, 196)
+lm.fit &lt;- lm(mpg ~ horsepower, data = Auto, subset = train)
+(Auto$mpg - predict(lm.fit, Auto))[-train]^2 %&gt;% mean()
+#&gt; [1] 23.29559
+lm.fit2 &lt;- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+(Auto$mpg - predict(lm.fit2, Auto))[-train]^2 %&gt;% mean()
+#&gt; [1] 18.90124
+lm.fit3 &lt;- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+(Auto$mpg - predict(lm.fit3, Auto))[-train]^2 %&gt;% mean()
+#&gt; [1] 19.2574</code></pre>
+<p>看吧，和之前结果基本一致，二次项拟合得模型较好，三次项就没啥变化了。</p>
+</div>
+<div class="section level1">
+<h1>留一交叉验证法</h1>
+<p>对于任意一个广义线性模型，都可以用<code>glm()</code>和<code>cv.glm()</code>函数来自动计算其LOOCV估计。<code>glm()</code>函数中有个参数<code>family=</code>可以设定模型类型，如选择<code>'binomial'</code>执行logistic回归。而如果不设定该参数的话，就和<code>lm()</code>结果一致。如下：</p>
+<pre class="r"><code>glm.fit &lt;- glm(mpg ~ horsepower, data = Auto)
+coef(glm.fit)
+#&gt; (Intercept)  horsepower 
+#&gt;  39.9358610  -0.1578447
+lm.fit &lt;- lm(mpg ~ horsepower, data = Auto)
+coef(lm.fit)
+#&gt; (Intercept)  horsepower 
+#&gt;  39.9358610  -0.1578447</code></pre>
+<p>而<code>glm()</code>可以和<code>cv.glm()</code>一起使用，其是<code>boot</code>包中函数。</p>
+<pre class="r"><code>library(boot)
+glm.fit &lt;- glm(mpg ~ horsepower, data = Auto)
+cv.err &lt;- cv.glm(Auto, glm.fit)
+str(cv.err)
+#&gt; List of 4
+#&gt;  $ call : language cv.glm(data = Auto, glmfit = glm.fit)
+#&gt;  $ K    : num 392
+#&gt;  $ delta: num [1:2] 24.2 24.2
+#&gt;  $ seed : int [1:626] 403 196 241038711 -724551010 -982165160 -1828904773 1219649113 639708648 -249104362 -1532738671 ...
+cv.err$delta
+#&gt; [1] 24.23151 24.23114</code></pre>
+<p>交叉验证结果如上所示。第一个数是k折CV估计，第二个数字是偏差校正后的结果。 下面用多项式来拟合多项式回归模型，计算相应的交叉验证误差：</p>
+<pre class="r"><code>cv.error &lt;- rep(0, 5)
+for(i in 1 : 5) {
+  glm.fit &lt;- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error[i] &lt;- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+#&gt; [1] 24.23151 19.24821 19.33498 19.42443 19.03321</code></pre>
+<p>可以看到在二次项以后几乎就没啥改善了。</p>
+</div>
+<div id="k" class="section level1">
+<h1>K折交叉验证</h1>
+<p><code>cv.glm()</code>同样可以用于实现k折CV。下面令k=10，进行k折交叉验证。下面计算一次到十次多项式拟合模型所产生的CV误差。</p>
+<pre class="r"><code>set.seed(17)
+cv.error.10 &lt;- rep(0, 10)
+for(i in 1 : 10) {
+  glm.fit &lt;- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error.10[i] &lt;- cv.glm(Auto, glm.fit, K = 10)$delta[1]
+}
+cv.error.10
+#&gt;  [1] 24.20520 19.18924 19.30662 19.33799 18.87911 19.02103 18.89609
+#&gt;  [8] 19.71201 18.95140 19.50196</code></pre>
+<p>还是不能说明使用大于二次的模型效果更好。</p>
+</div>
+<div class="section level1">
+<h1>自助法</h1>
+<p>使用自助法的两个步骤： - 创建一个计算感兴趣的统计量的函数 - 用boot库中的<code>boot()</code>函数，通过反复地从数据集汇中有放回的抽取观测来执行</p>
+<div class="section level2">
+<h2>例</h2>
+<p>假设希望用一笔固定数额的钱对于两个分别收益为X和Y的金融资产进行投资，其中X和Y是随机变量。打算把所有钱的百分比是<span class="math inline">\(\alpha\)</span>的部分投资到X，把剩下是<span class="math inline">\(1-\alpha\)</span>部分投资到Y。由于这两笔投资的收益存在波动性，所以希望选择一个<span class="math inline">\(\alpha\)</span>，使得投资的总风险或者说方差最小。即使<span class="math inline">\(Var(\alpha X+(1-\alpha)Y)\)</span>最小。使得最小的<span class="math inline">\(\alpha\)</span>值为： <span class="math display">\[\alpha = \frac{\sigma_Y^2-\sigma_{XY}}{\sigma_X^2+\sigma_Y^2-2\sigma_{XY}}\]</span> 其中，<span class="math inline">\(\sigma_X^2=Var(X)\)</span>，<span class="math inline">\(\sigma_Y^2=Var(Y)\)</span>，<span class="math inline">\(\sigma_{XY}=Cov(X,Y)\)</span></p>
+<p>先看下数据集样子：</p>
+<pre class="r"><code>head(Portfolio)
+#&gt;            X          Y
+#&gt; 1 -0.8952509 -0.2349235
+#&gt; 2 -1.5624543 -0.8851760
+#&gt; 3 -0.4170899  0.2718880
+#&gt; 4  1.0443557 -0.7341975
+#&gt; 5 -0.3155684  0.8419834
+#&gt; 6 -1.7371238 -2.0371910</code></pre>
+<p>然后，定义求<span class="math inline">\(\alpha\)</span>函数。</p>
+<pre class="r"><code>alpha.fn &lt;- function(data, index) {
+  X &lt;- data$X[index]
+  Y &lt;- data$Y[index]
+  alpha &lt;- (var(Y) - cov(X, Y)) / (var(X) + var(Y) - 2 * cov(X, Y))
+  return(alpha)
+}</code></pre>
+<p>先用所有数据求一下<span class="math inline">\(\alpha\)</span>。</p>
+<pre class="r"><code>alpha.fn(Portfolio, 1 : 100)
+#&gt; [1] 0.5758321</code></pre>
+<p>下面随机的从1到100中有放回的选取100个观测，相当于创建一个新的自助法数据集，然后再新的数据集上重新计算<span class="math inline">\(\hat\alpha\)</span>。</p>
+<pre class="r"><code>set.seed(1)
+alpha.fn(Portfolio, sample(100, 100, replace = TRUE))
+#&gt; [1] 0.5963833</code></pre>
+<p>可以通过多次运行，记录相应的<span class="math inline">\(\alpha\)</span>，然后计算其标准差，实现自助法分析。而这一过程可以通过<code>boot()</code>函数实现，下面产生1000个<span class="math inline">\(\alpha\)</span>自助法估计。</p>
+<pre class="r"><code>boot(Portfolio, alpha.fn, R = 1000)
+#&gt; 
+#&gt; ORDINARY NONPARAMETRIC BOOTSTRAP
+#&gt; 
+#&gt; 
+#&gt; Call:
+#&gt; boot(data = Portfolio, statistic = alpha.fn, R = 1000)
+#&gt; 
+#&gt; 
+#&gt; Bootstrap Statistics :
+#&gt;      original        bias    std. error
+#&gt; t1* 0.5758321 -7.315422e-05  0.08861826</code></pre>
+<p>结果表明，对于原始数据，<span class="math inline">\(\hat\alpha=0.5758，SE(\hat\alpha)=0.0886\)</span>。</p>
+</div>
+<div class="section level2">
+<h2>估计线性回归模型的精度</h2>
+<p>自助法可以用来衡量一种统计学习方法的估计和预测的系统的波动性。来估计一下<span class="math inline">\(\beta_0\)</span>和<span class="math inline">\(\beta_1\)</span>的波动性。先定义输出<span class="math inline">\(\beta_0\)</span>和<span class="math inline">\(\beta_1\)</span>函数：</p>
+<pre class="r"><code>boot.fn &lt;- function(data, index) {
+  lm(mpg ~ horsepower, data = Auto, subset = index) %&gt;% 
+    coef() %&gt;% 
+    return()
+}</code></pre>
+<p>使用所有数据集看下结果：</p>
+<pre class="r"><code>boot.fn(Auto, 1 : nrow(Auto))
+#&gt; (Intercept)  horsepower 
+#&gt;  39.9358610  -0.1578447</code></pre>
+<p>可以通过抽样产生其中一个样本的估计值：</p>
+<pre class="r"><code>boot.fn(Auto, sample(nrow(Auto), nrow(Auto), replace = TRUE))
+#&gt; (Intercept)  horsepower 
+#&gt;  39.4404609  -0.1536114</code></pre>
+<p>下面使用<code>boot()</code>函数进行估计：</p>
+<pre class="r"><code>boot(Auto, boot.fn, R = 1000)
+#&gt; 
+#&gt; ORDINARY NONPARAMETRIC BOOTSTRAP
+#&gt; 
+#&gt; 
+#&gt; Call:
+#&gt; boot(data = Auto, statistic = boot.fn, R = 1000)
+#&gt; 
+#&gt; 
+#&gt; Bootstrap Statistics :
+#&gt;       original        bias    std. error
+#&gt; t1* 39.9358610  0.0141555746 0.870373847
+#&gt; t2* -0.1578447 -0.0002819024 0.007533264</code></pre>
+<p>可以看到进行1000次boot抽样后<span class="math inline">\(\hat\beta_0=39.935\)</span>和<span class="math inline">\(\hat\beta_1=-0.157\)</span>，误差为0.86和0.007。 我们看下用<code>lm()</code>输出的结果：</p>
+<pre class="r"><code>lm(mpg ~ horsepower, data = Auto) %&gt;% 
+  summary() %&gt;% 
+  .$coef
+#&gt;               Estimate  Std. Error   t value      Pr(&gt;|t|)
+#&gt; (Intercept) 39.9358610 0.717498656  55.65984 1.220362e-187
+#&gt; horsepower  -0.1578447 0.006445501 -24.48914  7.031989e-81</code></pre>
+<p>均数的估计是一样的，标准误的估计有一丝的差别，因为线性回归的估计是依赖于线性回归模型，是有前提条件的。而自助法不依赖于这些假设，更加准确。</p>
+<p>下面计算对数据拟合二次模型所得到的的标准线性回归系数的估计和标准误差的自助估计。</p>
+<pre class="r"><code>boot.fn &lt;- function(data, index) {
+  lm(mpg ~ horsepower + I(horsepower^2), data = Auto, subset = index) %&gt;% 
+    coef() %&gt;% 
+    return()
+}</code></pre>
+<p>看下自助法估计得值：</p>
+<pre class="r"><code>set.seed(1)
+boot(Auto, boot.fn, R = 1000)
+#&gt; 
+#&gt; ORDINARY NONPARAMETRIC BOOTSTRAP
+#&gt; 
+#&gt; 
+#&gt; Call:
+#&gt; boot(data = Auto, statistic = boot.fn, R = 1000)
+#&gt; 
+#&gt; 
+#&gt; Bootstrap Statistics :
+#&gt;         original        bias     std. error
+#&gt; t1* 56.900099702  6.098115e-03 2.0944855842
+#&gt; t2* -0.466189630 -1.777108e-04 0.0334123802
+#&gt; t3*  0.001230536  1.324315e-06 0.0001208339</code></pre>
+<p>看下线性回归模型的估计值：</p>
+<pre class="r"><code>lm(mpg ~ horsepower + I(horsepower^2), data = Auto) %&gt;% 
+  summary() %&gt;% 
+  .$coef
+#&gt;                     Estimate   Std. Error   t value      Pr(&gt;|t|)
+#&gt; (Intercept)     56.900099702 1.8004268063  31.60367 1.740911e-109
+#&gt; horsepower      -0.466189630 0.0311246171 -14.97816  2.289429e-40
+#&gt; I(horsepower^2)  0.001230536 0.0001220759  10.08009  2.196340e-21</code></pre>
+<p>差别就很小了。 Peace out……</p>
+</div>
+</div>
