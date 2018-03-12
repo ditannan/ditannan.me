@@ -32,7 +32,7 @@ df1 <- data.frame(
 df1
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>variables</th><th scope=col>mean1</th><th scope=col>mean2</th></tr></thead>
 <tbody>
@@ -41,7 +41,7 @@ df1
     <tr><td>x3  </td><td>24.0</td><td>30.0</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 
@@ -49,13 +49,13 @@ df1
 (p <- c(0.02, 0.04, 0.001))
 ```
 
-
+<!--html_preserve-->
 <ol class=list-inline>
     <li>0.02</li>
     <li>0.04</li>
     <li>0.001</li>
 </ol>
-
+<!--/html_preserve-->
 
 
 **PS**:在R中可以通过将变量括号括起来，然后就会直接打印出来，在学习过程中可节省时间。
@@ -69,12 +69,12 @@ df1
 (p1 <- c(0.02, 0.001))
 ```
 
-
+<!--html_preserve-->
 <ol class=list-inline>
     <li>0.02</li>
     <li>0.001</li>
 </ol>
-
+<!--/html_preserve-->
 
 
 先把p值和变量名字对应，对向量进行命名有多种形式：
@@ -84,14 +84,14 @@ df1
 (p11 <- c(x1 = 0.02, x3 = 0.001))
 ```
 
-
+<!--html_preserve-->
 <dl class=dl-horizontal>
     <dt>x1</dt>
         <dd>0.02</dd>
     <dt>x3</dt>
         <dd>0.001</dd>
 </dl>
-
+<!--/html_preserve-->
 
 
 
@@ -100,14 +100,14 @@ df1
 (p11 <- setNames(p1, c('x1', 'x3')))
 ```
 
-
+<!--html_preserve-->
 <dl class=dl-horizontal>
     <dt>x1</dt>
         <dd>0.02</dd>
     <dt>x3</dt>
         <dd>0.001</dd>
 </dl>
-
+<!--/html_preserve-->
 
 
 
@@ -118,14 +118,14 @@ names(p11) <- c('x1', 'x3')
 p11
 ```
 
-
+<!--html_preserve-->
 <dl class=dl-horizontal>
     <dt>x1</dt>
         <dd>0.02</dd>
     <dt>x3</dt>
         <dd>0.001</dd>
 </dl>
-
+<!--/html_preserve-->
 
 
 三种方法都可以的得到我们想要的。传说中的条条大路通罗马。那我们接下来把p11转化为数据框：
@@ -137,7 +137,7 @@ p11
 str(p11.df)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th></th><th scope=col>p11</th></tr></thead>
 <tbody>
@@ -145,7 +145,7 @@ str(p11.df)
     <tr><th scope=row>x3</th><td>0.001</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
     'data.frame':   2 obs. of  1 variable:
@@ -165,7 +165,7 @@ library("tibble")
 str(p11.df)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>variables</th><th scope=col>p11</th></tr></thead>
 <tbody>
@@ -173,7 +173,7 @@ str(p11.df)
     <tr><td>x3   </td><td>0.001</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
     'data.frame':   2 obs. of  2 variables:
@@ -188,7 +188,7 @@ str(p11.df)
 dplyr::left_join(df1, p11.df, by = 'variables')
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>variables</th><th scope=col>mean1</th><th scope=col>mean2</th><th scope=col>p11</th></tr></thead>
 <tbody>
@@ -197,7 +197,7 @@ dplyr::left_join(df1, p11.df, by = 'variables')
     <tr><td>x3   </td><td>24.0 </td><td>30.0 </td><td>0.001</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 大功告成！！！
@@ -210,17 +210,17 @@ p11
 enframe(p11, name = 'variables', value = 'P value')
 ```
 
-
+<!--html_preserve-->
 <dl class=dl-horizontal>
     <dt>x1</dt>
         <dd>0.02</dd>
     <dt>x3</dt>
         <dd>0.001</dd>
 </dl>
+<!--/html_preserve-->
 
 
-
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>variables</th><th scope=col>P value</th></tr></thead>
 <tbody>
@@ -228,7 +228,7 @@ enframe(p11, name = 'variables', value = 'P value')
     <tr><td>x3   </td><td>0.001</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 可以看到不仅一步做到了，而且还可以对变量进行命名，感觉是非常的厉害了。
@@ -242,14 +242,14 @@ enframe(p11, name = 'variables', value = 'P value')
 str(q11)
 ```
 
-
+<!--html_preserve-->
 <dl>
     <dt>$x1</dt>
         <dd>0.02</dd>
     <dt>$x3</dt>
         <dd>0.001</dd>
 </dl>
-
+<!--/html_preserve-->
 
 
     List of 2
@@ -262,14 +262,14 @@ str(q11)
 as.data.frame(q11)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>x1</th><th scope=col>x3</th></tr></thead>
 <tbody>
     <tr><td>0.02 </td><td>0.001</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 这样我们就要再转置为宽数据格式，其实可以通过`reshape2`包中的`melt`函数完成：
@@ -279,7 +279,7 @@ as.data.frame(q11)
 reshape2::melt(q11)
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>value</th><th scope=col>L1</th></tr></thead>
 <tbody>
@@ -287,7 +287,7 @@ reshape2::melt(q11)
     <tr><td>0.001</td><td>x3   </td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
 可以看到也是一步完成了，不过要再对数据框进行变量重新命名才能进行合并。那么这里大家肯定会想，如果用`enframe`函数会怎样呢？我们来看一看：
@@ -298,7 +298,7 @@ enframe(q11)
 str(enframe(q11))
 ```
 
-
+<!--html_preserve-->
 <table>
 <thead><tr><th scope=col>name</th><th scope=col>value</th></tr></thead>
 <tbody>
@@ -306,7 +306,7 @@ str(enframe(q11))
     <tr><td>x3   </td><td>0.001</td></tr>
 </tbody>
 </table>
-
+<!--/html_preserve-->
 
 
     Classes 'tbl_df', 'tbl' and 'data.frame':   2 obs. of  2 variables:

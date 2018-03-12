@@ -1,0 +1,15 @@
+---
+title: 总结与展望
+author: Delta
+date: '2018-03-12'
+slug: 总结与展望
+categories:
+  - 杂记
+tags:
+  - 展望， 计划， 2018
+description: ''
+---
+
+今天开党员大会，每个人制作了一张ppt对自我进行总结，我思索了很久，浓缩了一下。
+
+![](\images\zongjie.jpg)

@@ -1,0 +1,114 @@
+---
+title: 简介map家族
+author: Delta
+date: '2018-03-12'
+slug: 简介map家族
+categories:
+  - R tips
+tags:
+  - R
+description: ''
+---
+
+```{r, setup, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(comment = '#>')
+```
+
+在基础包里，有`apply`一家子，掌握之后可以代替大部分的循环，Hadley大神也对其进行了扩展，开发了`plyr`包，里面很多可以对`apply`家族的补充。但要说对其更好的扩展的话，要属`purrr`包中的`map`家族。今天简单说下`map`家族，真的是简单的一说，因为里面的函数功能很强大。
+
+然后，这个包还是Hadley大神开发的……大神就是大神……
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+# `map`家族
+
+先生成一个数据框
+```{r}
+df <- tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+df
+```
+
+求每一列均值，其实map家族和apply家族很像。
+- `map()`返回一个`list`；
+- `map_lgl()`返回一个逻辑向量；
+- `map_int()`返回一个整形向量；
+- `map_dbl()`返回一个数值型向量；
+- `map_chr()`返回一个字符型向量。
+
+```{r}
+map(df, mean)
+# df %>% map(mean)
+```
+```{r}
+map_dbl(df, mean)
+```
+```{r}
+map_chr(df, mean)
+```
+
+还可以传其他参数进去：
+```{r}
+map_dbl(df, mean, trim = .5)
+```
+
+同时，`map`族函数还保留了向量名字。
+```{r}
+z <- list(x = 1 : 3, y = 4 : 5)
+map_int(z, length)
+```
+
+# 缩写形式
+如将一个数据集切分成3部分拟合线性回归模型，本来是这样的：
+```{r}
+models <- mtcars %>% 
+  split(.$cyl) %>% 
+  map(function(df) lm(mpg ~ wt, data = df))
+models
+```
+
+但可以写成这样：
+```{r}
+models <- mtcars %>% 
+  split(.$cyl) %>% 
+  map(~lm(mpg ~ wt, data = .))
+models
+```
+在这'.'指的是list中的元素，和for循环的i类似。
+再提取下每个模型的$R^2$：
+```{r}
+models %>% 
+  map(summary) %>% 
+  map_dbl(~.$r.squared)
+```
+还可以直接通过传入所需变量名字的字符串：
+```{r}
+models %>% 
+  map(summary) %>% 
+  map_dbl('r.squared')
+```
+对于一个list，可以通过传入整数来选择list中元素：
+```{r}
+x <- list(
+  list(1, 2, 3),
+  list(4, 5, 6),
+  list(7, 8, 9)
+)
+x %>% map_dbl(2)
+```
+这个目的用`apply`家族可以这样实现：
+```{r}
+sapply(x, `[`, 2) %>% unlist
+```
+显然上面的更方便。
+
+好了，先到这了，继续学习去了……
+
+Peace out~
+
