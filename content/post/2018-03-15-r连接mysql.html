@@ -1,0 +1,141 @@
+---
+title: R连接MySQL
+author: Delta
+date: '2018-03-15'
+slug: r连接mysql
+categories:
+  - R
+  - MySQL
+tags:
+  - MySQL
+  - R
+description: ''
+---
+
+
+
+<div class="section level1">
+<h1>开工</h1>
+<div class="section level2">
+<h2>加载包</h2>
+<pre class="r"><code>library(RMySQL)
+library(magrittr)</code></pre>
+</div>
+<div class="section level2">
+<h2>连接数据库</h2>
+<p>选择要连接的数据库名字，然后账户名和密码，服务器地址和端口。</p>
+<pre class="r"><code>conn &lt;- dbConnect(MySQL(), dbname = &#39;bookstore&#39;, username = &#39;root&#39;, password = &#39;123456&#39;, host = &#39;127.0.0.1&#39;, port = 3306)
+# 查看连接详情
+summary(conn)</code></pre>
+<pre><code>## &lt;MySQLConnection:0,0&gt;
+##   User:   root 
+##   Host:   127.0.0.1 
+##   Dbname: bookstore 
+##   Connection type: 127.0.0.1 via TCP/IP 
+## 
+## Results:</code></pre>
+</div>
+<div class="section level2">
+<h2>查看数据库中包含的表格</h2>
+<pre class="r"><code>dbListTables(conn)</code></pre>
+<pre><code>## [1] &quot;authors&quot; &quot;books&quot;</code></pre>
+<p>可以看到包含两个表</p>
+</div>
+<div class="section level2">
+<h2>读取数据库中表格</h2>
+<pre class="r"><code>authors &lt;- dbReadTable(conn, &#39;authors&#39;)
+authors</code></pre>
+<pre><code>##   author_id author_last author_first        country
+## 1         1      Greene       Graham United Kingdom</code></pre>
+</div>
+<div class="section level2">
+<h2>写入表格</h2>
+<pre class="r"><code>data(&quot;iris&quot;)
+dbWriteTable(conn, &#39;iris_df&#39;, iris)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>检验下是否写入：</p>
+<pre class="r"><code>dbListTables(conn)</code></pre>
+<pre><code>## [1] &quot;authors&quot; &quot;books&quot;   &quot;iris_df&quot;</code></pre>
+<p>恩，成功了。</p>
+</div>
+<div class="section level2">
+<h2>查询</h2>
+<p>我们查询下‘iris_df’数据集中‘Species’为‘setosa’的数据。</p>
+<pre class="r"><code>iris_sub &lt;- dbSendQuery(
+  conn, 
+  &quot;select * from iris_df 
+  where Species = &#39;setosa&#39;&quot;
+) %&gt;% dbFetch()
+iris_sub</code></pre>
+<pre><code>##    row_names Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          1          5.1         3.5          1.4         0.2  setosa
+## 2          2          4.9         3.0          1.4         0.2  setosa
+## 3          3          4.7         3.2          1.3         0.2  setosa
+## 4          4          4.6         3.1          1.5         0.2  setosa
+## 5          5          5.0         3.6          1.4         0.2  setosa
+## 6          6          5.4         3.9          1.7         0.4  setosa
+## 7          7          4.6         3.4          1.4         0.3  setosa
+## 8          8          5.0         3.4          1.5         0.2  setosa
+## 9          9          4.4         2.9          1.4         0.2  setosa
+## 10        10          4.9         3.1          1.5         0.1  setosa
+## 11        11          5.4         3.7          1.5         0.2  setosa
+## 12        12          4.8         3.4          1.6         0.2  setosa
+## 13        13          4.8         3.0          1.4         0.1  setosa
+## 14        14          4.3         3.0          1.1         0.1  setosa
+## 15        15          5.8         4.0          1.2         0.2  setosa
+## 16        16          5.7         4.4          1.5         0.4  setosa
+## 17        17          5.4         3.9          1.3         0.4  setosa
+## 18        18          5.1         3.5          1.4         0.3  setosa
+## 19        19          5.7         3.8          1.7         0.3  setosa
+## 20        20          5.1         3.8          1.5         0.3  setosa
+## 21        21          5.4         3.4          1.7         0.2  setosa
+## 22        22          5.1         3.7          1.5         0.4  setosa
+## 23        23          4.6         3.6          1.0         0.2  setosa
+## 24        24          5.1         3.3          1.7         0.5  setosa
+## 25        25          4.8         3.4          1.9         0.2  setosa
+## 26        26          5.0         3.0          1.6         0.2  setosa
+## 27        27          5.0         3.4          1.6         0.4  setosa
+## 28        28          5.2         3.5          1.5         0.2  setosa
+## 29        29          5.2         3.4          1.4         0.2  setosa
+## 30        30          4.7         3.2          1.6         0.2  setosa
+## 31        31          4.8         3.1          1.6         0.2  setosa
+## 32        32          5.4         3.4          1.5         0.4  setosa
+## 33        33          5.2         4.1          1.5         0.1  setosa
+## 34        34          5.5         4.2          1.4         0.2  setosa
+## 35        35          4.9         3.1          1.5         0.2  setosa
+## 36        36          5.0         3.2          1.2         0.2  setosa
+## 37        37          5.5         3.5          1.3         0.2  setosa
+## 38        38          4.9         3.6          1.4         0.1  setosa
+## 39        39          4.4         3.0          1.3         0.2  setosa
+## 40        40          5.1         3.4          1.5         0.2  setosa
+## 41        41          5.0         3.5          1.3         0.3  setosa
+## 42        42          4.5         2.3          1.3         0.3  setosa
+## 43        43          4.4         3.2          1.3         0.2  setosa
+## 44        44          5.0         3.5          1.6         0.6  setosa
+## 45        45          5.1         3.8          1.9         0.4  setosa
+## 46        46          4.8         3.0          1.4         0.3  setosa
+## 47        47          5.1         3.8          1.6         0.2  setosa
+## 48        48          4.6         3.2          1.4         0.2  setosa
+## 49        49          5.3         3.7          1.5         0.2  setosa
+## 50        50          5.0         3.3          1.4         0.2  setosa</code></pre>
+<p>恩，不错。。。</p>
+</div>
+<div class="section level2">
+<h2>删除表格</h2>
+<pre class="r"><code>dbRemoveTable(conn, &#39;iris_df&#39;)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>看下删除是否真的成功：</p>
+<pre class="r"><code>dbListTables(conn)</code></pre>
+<pre><code>## [1] &quot;authors&quot; &quot;books&quot;</code></pre>
+<p>删除了。</p>
+</div>
+<div class="section level2">
+<h2>关闭连接</h2>
+<pre class="r"><code>dbDisconnect(conn)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+</div>
+<div class="section level1">
+<h1>收工</h1>
+<p>Peace out……</p>
+</div>

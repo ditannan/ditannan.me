@@ -1,0 +1,82 @@
+---
+title: R连接MySQL
+author: Delta
+date: '2018-03-15'
+slug: r连接mysql
+categories:
+  - R
+  - MySQL
+tags:
+  - MySQL
+  - R
+description: ''
+---
+
+# 开工
+## 加载包
+```{r, warning=FALSE, message=FALSE}
+library(RMySQL)
+library(magrittr)
+```
+
+## 连接数据库
+选择要连接的数据库名字，然后账户名和密码，服务器地址和端口。
+```{r}
+conn <- dbConnect(MySQL(), dbname = 'bookstore', username = 'root', password = '123456', host = '127.0.0.1', port = 3306)
+# 查看连接详情
+summary(conn)
+```
+
+## 查看数据库中包含的表格
+```{r}
+dbListTables(conn)
+```
+可以看到包含两个表
+
+## 读取数据库中表格
+```{r}
+authors <- dbReadTable(conn, 'authors')
+authors
+```
+
+## 写入表格
+```{r}
+data("iris")
+dbWriteTable(conn, 'iris_df', iris)
+```
+
+检验下是否写入：
+```{r}
+dbListTables(conn)
+```
+恩，成功了。
+
+## 查询
+我们查询下‘iris_df’数据集中‘Species’为‘setosa’的数据。
+```{r}
+iris_sub <- dbSendQuery(
+  conn, 
+  "select * from iris_df 
+  where Species = 'setosa'"
+) %>% dbFetch()
+iris_sub
+```
+恩，不错。。。
+
+
+## 删除表格
+```{r}
+dbRemoveTable(conn, 'iris_df')
+```
+看下删除是否真的成功：
+```{r}
+dbListTables(conn)
+```
+删除了。
+
+## 关闭连接
+```{r}
+dbDisconnect(conn)
+```
+# 收工
+Peace out……
