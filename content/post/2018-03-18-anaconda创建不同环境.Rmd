@@ -1,0 +1,22 @@
+---
+title: Anaconda创建不同环境
+author: Delta
+date: '2018-03-18'
+slug: anaconda创建不同环境
+categories: [python]
+tags:
+  - 配置
+description: ''
+---
+
+在使用Anaconda时，其内置的python环境最新版是3.6，而有些库的使用需要3.5版本的，比如大名鼎鼎的TensorFlow就是要在python3.5环境运行，而Anaconda厉害的一点就是可以创建不同的环境。
+
+# 开工
+在命令行中使用语句`conda create -n py35 python=3.5 anaconda`语句就可以创建python3.5环境，环境名字可以自己设定，这里我把它设置为py35。
+
+创建完成后，使用语句`activate py35`就可以激活所创建的环境。再使用jupyter notebook内置的python就是3.5版本的了。可以继续愉快的学习了……
+
+使用完成后，可以通过`deactivate`语句还原……
+
+# 收工
+Peace out……

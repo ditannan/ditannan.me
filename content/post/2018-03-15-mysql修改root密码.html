@@ -13,6 +13,6 @@ description: ''
 
 
 <p>今天下载了个MySQL的客户端，新建了个数据库，然后开始自己设置密码设得比较私密，在R中连接时（点击<a href="https://ditannan.me/2018/03/15/r%E8%BF%9E%E6%8E%A5mysql/">r连接MySQL</a>查看如何在R中连接MySQL）密码是显示出来的，所以就更改了下root密码，方法如下，也许以后还要改：</p>
-<p>打开cmd命令行，键入<code>mysql -u root</code>，然后使用下面语句进行更改：</p>
+<p>打开cmd命令行，键入<code>mysql -u root -p</code>， 输入原密码进行登录。 然后使用下面语句进行更改：</p>
 <pre><code>SET PASSWORD FOR &#39;root&#39;@&#39;localhost&#39; = PASSWORD(&#39;newpass&#39;);</code></pre>
 <p>就可以了。 Peace out……</p>
