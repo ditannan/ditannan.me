@@ -1,0 +1,63 @@
+---
+title: 一道笔试题的思考
+author: Delta
+date: '2018-04-01'
+slug: 一道笔试题的思考
+categories:
+  - R
+tags:
+  - R tips
+description: ''
+---
+
+```{r message=FALSE, setup, echo=FALSE}
+knitr::opts_chunk$set(comment = '#>')
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(readr)
+library(plyr)
+library(dplyr)
+library(magrittr)
+```
+
+
+# 序
+事情是这样的，师姐在找工作遇到这么一道题，数据如下，需要添加一列叫tsp，这列为不同人的标识符，其中P1变量相同的未同一个人，P2、P3、P4都相同也为同一个人。
+```{r message=FALSE, warning=FALSE, include=FALSE}
+df <- read_csv('C:\\Users\\xzm\\Desktop\\Rlearn\\R_Git\\Test\\q1.csv', locale = locale(encoding = 'GB18030'))
+```
+
+```{r}
+df
+```
+
+# 开工
+其实问题很简单，但是要实现中间还是有些小曲折，我采取的方法比较笨，先用P2、P3、P4进行分组，这三者相同的就会在一个组，然后这组的tsp相同就可以，然后再按照P1进行分组，分组后再将同一个组的tsp转化成相同的。
+
+这里就不进行下去了，因为在我敲下这些文字时发现上面的解决办法会有问题，等待进一步解决吧。
+
+这里思考其中的一个步骤，就是根据P2、P3、P4来把相同的人找出来。
+提供两种思路
+```{r}
+q2 <- df %>% 
+  transform(tsp1 = as.numeric(interaction(P2, P3, P4, drop = T))) %>% 
+  arrange(tsp1)
+q2
+```
+上面的做法就是将P2、P3、P4进行组合后再将因子转化为数字。
+
+提供另外一种做法，感觉更巧妙一些
+```{r}
+q3 <- df
+q3$P <- paste0(q3$P2, q3$P3, q3$P4)
+q3$tsp <- match(q3$P, unique(q3$P))
+q3
+```
+
+这种方法巧妙的使用了`match()`函数，来将不同的因子排序。
+
+所以，待解决的问题就是怎么将上面的步骤和P1连续起来，P1相同的为一个人呢？？
+
+# 收工
+未完待续
