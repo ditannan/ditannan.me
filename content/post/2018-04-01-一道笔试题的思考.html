@@ -97,3 +97,58 @@ q3</code></pre>
 <h1>收工</h1>
 <p>未完待续</p>
 </div>
+<div id="2018-04-02" class="section level1">
+<h1>更新（2018-04-02）</h1>
+<p>昨天在Stack Overflow提出了上面没有解决的问题，今天就得到了答复，很是欣慰……原问题地址：<a href="https://stackoverflow.com/questions/49597324/identify-unique-id-from-two-variables">identify unique id from two variables</a></p>
+<p>原答主是用图论的思想解答的，将不同的P1、P2连接起来，只要是相连的子图就为一个个体。又一次感受到了图论的厉害……</p>
+<pre class="r"><code>IDs = read.table(text=&quot;P1  P2
+                 a   1
+                 a   1
+                 a   2
+                 b   2
+                 c   3
+                 c   4&quot;,
+                 header=TRUE, stringsAsFactors=FALSE)
+IDs</code></pre>
+<pre><code>#&gt;   P1 P2
+#&gt; 1  a  1
+#&gt; 2  a  1
+#&gt; 3  a  2
+#&gt; 4  b  2
+#&gt; 5  c  3
+#&gt; 6  c  4</code></pre>
+<p>将上面数据转化为相连的图：</p>
+<pre class="r"><code>library(igraph)
+G = graph_from_edgelist(as.matrix(IDs), directed = FALSE)
+G</code></pre>
+<pre><code>#&gt; IGRAPH 34fc4d8 UN-- 7 6 -- 
+#&gt; + attr: name (v/c)
+#&gt; + edges from 34fc4d8 (vertex names):
+#&gt; [1] a--1 a--1 a--2 2--b c--3 c--4</code></pre>
+<p>转化为图后，就可以将相连的节点（P1、P2的值）作为一个单元。</p>
+<pre class="r"><code>components(G)</code></pre>
+<pre><code>#&gt; $membership
+#&gt; a 1 2 b c 3 4 
+#&gt; 1 1 1 1 2 2 2 
+#&gt; 
+#&gt; $csize
+#&gt; [1] 4 3
+#&gt; 
+#&gt; $no
+#&gt; [1] 2</code></pre>
+<pre class="r"><code>IDs$ID = components(G)$membership[IDs$P1]
+IDs</code></pre>
+<pre><code>#&gt;   P1 P2 ID
+#&gt; 1  a  1  1
+#&gt; 2  a  1  1
+#&gt; 3  a  2  1
+#&gt; 4  b  2  1
+#&gt; 5  c  3  2
+#&gt; 6  c  4  2</code></pre>
+<p>原答主还提供了可视化的图：</p>
+<pre class="r"><code>RES = bipartite_mapping(G)
+V(G)$type = RES$type
+LO = layout_as_bipartite(G)
+plot(G, layout=LO)</code></pre>
+<p><img src="/post/2018-04-01-一道笔试题的思考_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
