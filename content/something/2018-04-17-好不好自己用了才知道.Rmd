@@ -15,4 +15,4 @@ description: ''
 
 所以，总结下就是，别人的意见只能参考，好不好自己用了才知道，至少对于学学linus语句还是很有帮助的，里面Rstudio的Rmarkdown代码块更加的漂亮些，表示很喜欢~
 
-![](https://github.com/ditannan/ditannan.me/blob/master/static/mymac.jpg)
+![](https://github.com/ditannan/ditannan.me/blob/master/static/mymac.jpg?raw=true)
