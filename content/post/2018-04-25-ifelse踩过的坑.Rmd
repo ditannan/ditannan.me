@@ -10,7 +10,7 @@ tags:
 slug: ifelse()踩过的坑
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 knitr::opts_chunk$set(comment = '#>')
 ```
 
