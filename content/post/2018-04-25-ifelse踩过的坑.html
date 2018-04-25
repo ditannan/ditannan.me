@@ -24,7 +24,11 @@ if (a &lt; 10) {
   print(&#39;a大于20&#39;)
 }</code></pre>
 <pre><code>#&gt; [1] &quot;a大于等于10小于20&quot;</code></pre>
-<p>这里可以进行多个条件进行判断，还可以通过<code>ifelse()</code>函数实现： &gt; # ifelse(test, yes, no) ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.</p>
+<p>这里可以进行多个条件进行判断，还可以通过<code>ifelse()</code>函数实现：</p>
+<blockquote>
+<h1 id="ifelsetest-yes-no">ifelse(test, yes, no)</h1>
+<p>ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.</p>
+</blockquote>
 <pre class="r"><code>ifelse(10 &lt;= a &amp; a &lt; 20, &#39;a大于等于10小于20&#39;, &#39;其他&#39;)</code></pre>
 <pre><code>#&gt; [1] &quot;a大于等于10小于20&quot;</code></pre>
 <p>其实<code>ifelse()</code>也可以进行多个条件进行判断，我们把它叫做“nested ifelse()”，就是<code>ifelse()</code>里面可以嵌套<code>ifelse()</code>，可以嵌套在“yes”里面，也可以嵌套在“no”里面。所以上面的可以写成这样：</p>
@@ -49,7 +53,6 @@ if (a &lt; 10) {
 <pre><code>#&gt; Warning in if (nchar(a) == 4) {: 条件的长度大于一，因此只能用其第一元素</code></pre>
 <pre class="r"><code>b</code></pre>
 <pre><code>#&gt; [1] &quot;four&quot;</code></pre>
-<p>结果是这样的： &gt; 条件的长度大于一，因此只能用其第一元素[1] “four”</p>
 <p>看来并没有成功，那为什么会这样呢，我们只要把我们的条件输出来看下：</p>
 <pre class="r"><code>nchar(a) == 4</code></pre>
 <pre><code>#&gt; [1]  TRUE FALSE FALSE FALSE FALSE</code></pre>

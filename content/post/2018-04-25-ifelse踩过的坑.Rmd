@@ -29,6 +29,7 @@ if (a < 10) {
 ```
 
 这里可以进行多个条件进行判断，还可以通过`ifelse()`函数实现：
+
 > # ifelse(test, yes, no)
 ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.
 
@@ -64,8 +65,6 @@ if (nchar(a) == 4) {
 b
 ```
 
-结果是这样的：
-> 条件的长度大于一，因此只能用其第一元素[1] "four"
 
 看来并没有成功，那为什么会这样呢，我们只要把我们的条件输出来看下：
 ```{r}
