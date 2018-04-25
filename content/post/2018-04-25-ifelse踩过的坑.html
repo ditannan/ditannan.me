@@ -1,0 +1,120 @@
+---
+title: Ifelse踩过的坑
+author: Delta
+date: '2018-04-25'
+categories:
+  - R
+tags:
+  - R
+  - R tips
+slug: ifelse()踩过的坑
+---
+
+
+
+<pre class="r"><code>knitr::opts_chunk$set(comment = &#39;#&gt;&#39;)</code></pre>
+<div class="section level1">
+<h1>序</h1>
+<p>关于R里面的条件判断，其中有个是这样的：</p>
+<pre class="r"><code>a &lt;- 18
+if (a &lt; 10) {
+  print(&#39;a小于10&#39;)
+} else if (a &lt; 20) {
+  print(&#39;a大于等于10小于20&#39;)
+} else {
+  print(&#39;a大于20&#39;)
+}</code></pre>
+<pre><code>#&gt; [1] &quot;a大于等于10小于20&quot;</code></pre>
+<p>这里可以进行多个条件进行判断，还可以通过<code>ifelse()</code>函数实现： &gt; # ifelse(test, yes, no) ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.</p>
+<pre class="r"><code>ifelse(10 &lt;= a &amp; a &lt; 20, &#39;a大于等于10小于20&#39;, &#39;其他&#39;)</code></pre>
+<pre><code>#&gt; [1] &quot;a大于等于10小于20&quot;</code></pre>
+<p>其实<code>ifelse()</code>也可以进行多个条件进行判断，我们把它叫做“nested ifelse()”，就是<code>ifelse()</code>里面可以嵌套<code>ifelse()</code>，可以嵌套在“yes”里面，也可以嵌套在“no”里面。所以上面的可以写成这样：</p>
+<pre class="r"><code>ifelse(a &lt; 10, &#39;a小于10&#39;, 
+       ifelse(a &lt; 20, &#39;a大于等于10小于20&#39;,
+              &#39;a大于20&#39;)
+)</code></pre>
+<pre><code>#&gt; [1] &quot;a大于等于10小于20&quot;</code></pre>
+<p>序说的有点长，我们进入正题，如果是对数据框的一列进行判断，是不是可以用上面的呢？</p>
+</div>
+<div class="section level1">
+<h1>开工</h1>
+<p>我们以一列为例，新建一个向量a，我们要做的是根据a的不同值生成b，a如下，想要得到的是：如果a长度为4，则b为’four’，如果a长度为6，则b为’six’，如果a长度为8，则b为’eight’。我们先试下下面的：</p>
+<pre class="r"><code>a &lt;- c(&#39;2018&#39;, &#39;201809&#39;, &#39;20180912&#39;, &#39;22&#39;, &#39;(空)&#39;)</code></pre>
+<pre class="r"><code>if (nchar(a) == 4) {
+  b &lt;- &#39;four&#39;
+} else if (nchar(a) == 6) {
+  b &lt;- &#39;six&#39;
+} else {
+  b &lt;- a
+}</code></pre>
+<pre><code>#&gt; Warning in if (nchar(a) == 4) {: 条件的长度大于一，因此只能用其第一元素</code></pre>
+<pre class="r"><code>b</code></pre>
+<pre><code>#&gt; [1] &quot;four&quot;</code></pre>
+<p>结果是这样的： &gt; 条件的长度大于一，因此只能用其第一元素[1] “four”</p>
+<p>看来并没有成功，那为什么会这样呢，我们只要把我们的条件输出来看下：</p>
+<pre class="r"><code>nchar(a) == 4</code></pre>
+<pre><code>#&gt; [1]  TRUE FALSE FALSE FALSE FALSE</code></pre>
+<p>可以看到R中的比较是向量化的，就是后面的4长度不够会补齐，这样第一个条件就是上面的一个TRUE和4个FALSE，其实我们想要做的是a中的每个元素都进行一次比较再计算。这点跟SAS中是不一样的，SAS中data步对数据的操作是一行一行进行的，所以用上面的逻辑可以做到。</p>
+<p>而R中的<code>ifelse()</code>函数则可以完成，如下：</p>
+<pre class="r"><code>b &lt;- ifelse(nchar(a) == 8, b &lt;- &#39;eight&#39;, 
+            ifelse(nchar(a) == 6, b &lt;- &#39;six&#39;, 
+                   ifelse(nchar(a) == 4, b &lt;- &#39;four&#39;,
+                          b &lt;- a)))
+b</code></pre>
+<pre><code>#&gt; [1] &quot;four&quot;  &quot;six&quot;   &quot;eight&quot; &quot;22&quot;    &quot;(空)&quot;</code></pre>
+<p>这里的逻辑应该是和SAS中一样。其实到这问题就解决了，但此时看下我们的题目，不是说<code>ifesle()</code>踩过的坑么，坑呢？？？</p>
+</div>
+<div class="section level1">
+<h1>高潮</h1>
+<p>好吧，高潮来了，下面是我踩过的<code>ifelse()</code>的坑： 刚刚是新生成一个向量b，如果我们直接对a进行更改，是否可行呢？我们将a复制一下给c，用c进行试验：</p>
+<pre class="r"><code>a &lt;- c(&#39;2018&#39;, &#39;201809&#39;, &#39;20180912&#39;, &#39;22&#39;, &#39;(空)&#39;)
+c &lt;- a
+c &lt;- ifelse(nchar(c) == 8, c &lt;- &#39;eight&#39;, 
+            ifelse(nchar(c) == 6, c &lt;- &#39;six&#39;, 
+                   ifelse(nchar(c) == 4, c &lt;- &#39;four&#39;,
+                          c &lt;- c)))
+c</code></pre>
+<pre><code>#&gt; [1] &quot;eight&quot; &quot;eight&quot; &quot;eight&quot; &quot;eight&quot; &quot;eight&quot;</code></pre>
+<p>what?为什么会这样？这里我们从开始看，如果字符串长度为8，那么c赋值为’eight’，然后进行下面的，我们发现最后结果都是’eight’，是因为进行第一步后，c变成了’eight’，这样接下来两个判断跳过，直接执行后面的<code>c &lt;- c</code>了，所以就都是’eight’，我们可以通过下面的代码验证一下：</p>
+<pre class="r"><code>a &lt;- c(&#39;2018&#39;, &#39;201809&#39;, &#39;20180912&#39;, &#39;22&#39;, &#39;(空)&#39;)
+c &lt;- a
+c &lt;- ifelse(nchar(c) == 8, c &lt;- &#39;eight&#39;, 
+            ifelse(nchar(c) == 6, c &lt;- &#39;six&#39;, 
+                   ifelse(nchar(c) == 4, c &lt;- &#39;four&#39;,
+                          c &lt;- &#39;last&#39;)))
+c</code></pre>
+<pre><code>#&gt; [1] &quot;last&quot;  &quot;last&quot;  &quot;eight&quot; &quot;last&quot;  &quot;last&quot;</code></pre>
+<p>当我把最后改成’last’时，可以看到输出的结果除了长度对应为8的再第一步时为’eight’后，其他的都只执行了最后的<code>c &lt;- 'last'</code>。刚说到第一步判断后，c的值为’eight’了，这样最后的<code>c &lt;- c</code>将向量中的c都转化为了函数里面的c变量，及’eight’。我们还可以通过另外一个方式验证一下</p>
+<pre class="r"><code>a &lt;- c(&#39;2018&#39;, &#39;201809&#39;, &#39;20180912&#39;, &#39;22&#39;, &#39;(空)&#39;)
+c &lt;- a
+c &lt;- ifelse(nchar(c) == 8, c &lt;- &#39;eight&#39;, 
+            ifelse(nchar(c) == 6, c &lt;- &#39;six&#39;, 
+                   ifelse(nchar(c) == 5, c &lt;- &#39;four&#39;,
+                          c &lt;- &#39;last&#39;)))
+c</code></pre>
+<pre><code>#&gt; [1] &quot;four&quot;  &quot;four&quot;  &quot;eight&quot; &quot;four&quot;  &quot;four&quot;</code></pre>
+<p>我将长度为4的判断改成了5，这时候结果就又变了，是因为进行第一步长度为8判断后，函数里面c变量为’eight’，其长度为5，这样就执行了后面的<code>c &lt;- 'four'</code>再后面的也跳过了，所以才有所得到的结果。</p>
+<p>再看下面的，我把最后的一步改成了a结果又变了：</p>
+<pre class="r"><code>a &lt;- c(&#39;2018&#39;, &#39;201809&#39;, &#39;20180912&#39;, &#39;22&#39;, &#39;(空)&#39;)
+c &lt;- a
+c &lt;- ifelse(nchar(c) == 8, c &lt;- &#39;eight&#39;, 
+            ifelse(nchar(c) == 6, c &lt;- &#39;six&#39;, 
+                   ifelse(nchar(c) == 4, c &lt;- &#39;four&#39;,
+                          c &lt;- a)))
+c</code></pre>
+<pre><code>#&gt; [1] &quot;2018&quot;  &quot;2018&quot;  &quot;eight&quot; &quot;2018&quot;  &quot;2018&quot;</code></pre>
+<p>这里跟第一种情况类似，只是这里最后执行的是<code>c &lt;- a</code>，但这里让我好奇的一点是为啥是’2018’呢，感觉是用的a的第一个值，我们验证一下，将a里面值得顺序变一下</p>
+<pre class="r"><code>a &lt;- c(&#39;(空)&#39;, &#39;2018&#39;, &#39;201809&#39;, &#39;20180912&#39;, &#39;22&#39;)
+c &lt;- a
+c &lt;- ifelse(nchar(c) == 8, c &lt;- &#39;eight&#39;, 
+            ifelse(nchar(c) == 6, c &lt;- &#39;six&#39;, 
+                   ifelse(nchar(c) == 4, c &lt;- &#39;four&#39;,
+                          c &lt;- a)))
+c</code></pre>
+<pre><code>#&gt; [1] &quot;(空)&quot;  &quot;(空)&quot;  &quot;(空)&quot;  &quot;eight&quot; &quot;(空)&quot;</code></pre>
+<p>可以看到结果真的变了，和预期的一样，那么为什么会这样呢？先留着这个问题吧？</p>
+</div>
+<div class="section level1">
+<h1>收工</h1>
+<p>Peace out~</p>
+</div>
