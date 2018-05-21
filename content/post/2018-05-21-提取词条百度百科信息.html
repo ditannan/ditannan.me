@@ -21,10 +21,6 @@ description: ''
 <div class="section level1">
 <h1>开工</h1>
 <p>先感受下这个国籍的变量到底有哪些，看看里面的组成，这里选取了如下国家：</p>
-<pre><code>#&gt; Parsed with column specification:
-#&gt; cols(
-#&gt;   X1 = col_character()
-#&gt; )</code></pre>
 <pre class="r"><code>country</code></pre>
 <pre><code>#&gt;  [1] &quot;阿尔及利亚&quot;   &quot;阿富汗&quot;       &quot;阿根廷&quot;       &quot;阿曼苏丹国&quot;  
 #&gt;  [5] &quot;埃及&quot;         &quot;埃塞俄比亚&quot;   &quot;爱尔兰&quot;       &quot;安哥拉&quot;      
@@ -54,9 +50,9 @@ description: ''
 <div class="section level1">
 <h1>发展</h1>
 <p>一开始是想着查维基百科的结果，从中提取对应的洲，毕竟维基百科有对应的API可以调用，结果发现呢，维基百科里面居然没有可以直接挑出来所在洲的值，大家可自行查看，比如<a href="https://www.wikiwand.com/zh-hans/%E9%98%BF%E5%AF%8C%E6%B1%97">阿富汗</a>，国家所在的洲信息在正文里面，这样提取似乎有些困难，不过可以试试正则表达式：“.洲”也许可以提炼出来。</p>
-<p>然后我就转向百度百科了，百度百科还是可以的，信息如下： <img src="../../static/baidubaike-sample.jpg" /><!-- --></p>
+<p>然后我就转向百度百科了，百度百科还是可以的，信息如下： <img src="../../public/baidubaike-sample.jpg" /><!-- --></p>
 <p>那接下来就只要正确的读取这个值所在的位置就可以了，这里我们使用<a href="http://hadley.nz/index.html">Hadley</a>大神的<a href="https://github.com/hadley/rvest"><code>rvest</code></a>包。</p>
-<p>我们先找到网页中对应的位置，如下所示： <img src="../../static/html-sample.jpg" /><!-- --></p>
+<p>我们先找到网页中对应的位置，如下所示： <img src="../../public/html-sample.jpg" /><!-- --></p>
 <p>可以看到这些是一个个“键值对”组成，对应的标签为<code>dd</code>，所以可以通过<code>dd.basicInfo-item value</code>进行提取。可我们仔细观察发现洲并没有专属的<code>class</code>，其他的值对应的也是这个类，这样看似无法直接提取对应的洲，但实际上反而方便了其他信息一起提取。我们就可以把截图中的所有的基本信息一起提取，只要我们再把前面的“键”标签找到，可以看到是<code>dt.basicInfo-item name</code>。</p>
 </div>
 <div class="section level1">
@@ -120,9 +116,6 @@ table(country_state$state)</code></pre>
 <div class="section level1">
 <h1>收尾</h1>
 <p>下面就简单的画个图吧，收个尾：</p>
-<pre class="r"><code>detach(&quot;package:rvest&quot;, unload=TRUE)</code></pre>
-<pre><code>#&gt; Warning: 无法卸下&#39;rvest&#39;这个名字空间：
-#&gt;   名字空间&#39;rvest&#39;是由&#39;tidyverse&#39;引进的，因此无法将之卸下</code></pre>
 <pre class="r"><code>country_state %&gt;% 
   group_by(state) %&gt;% 
   dplyr::summarise(n = n()) %&gt;% 

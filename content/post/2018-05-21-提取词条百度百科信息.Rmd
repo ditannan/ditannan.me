@@ -24,7 +24,7 @@ knitr::opts_chunk$set(comment = '#>')
 
 # 开工
 先感受下这个国籍的变量到底有哪些，看看里面的组成，这里选取了如下国家：
-```{r echo=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 df <- read_csv('../../static/country.csv', locale = locale(encoding = 'GB18030'), col_names = FALSE)
 country <- df$X1
 ```
@@ -41,7 +41,7 @@ country
 
 然后我就转向百度百科了，百度百科还是可以的，信息如下：
 ```{r echo=FALSE}
-knitr::include_graphics('../../static/baidubaike-sample.jpg')
+knitr::include_graphics('../../public/baidubaike-sample.jpg')
 ```
 
 
@@ -49,7 +49,7 @@ knitr::include_graphics('../../static/baidubaike-sample.jpg')
 
 我们先找到网页中对应的位置，如下所示：
 ```{r echo=FALSE}
-knitr::include_graphics('../../static/html-sample.jpg')
+knitr::include_graphics('../../public/html-sample.jpg')
 ```
 
 可以看到这些是一个个“键值对”组成，对应的标签为`dd`，所以可以通过`dd.basicInfo-item value`进行提取。可我们仔细观察发现洲并没有专属的`class`，其他的值对应的也是这个类，这样看似无法直接提取对应的洲，但实际上反而方便了其他信息一起提取。我们就可以把截图中的所有的基本信息一起提取，只要我们再把前面的“键”标签找到，可以看到是`dt.basicInfo-item name`。
@@ -109,8 +109,7 @@ table(country_state$state)
 
 # 收尾
 下面就简单的画个图吧，收个尾：
-```{r}
-detach("package:rvest", unload=TRUE)
+```{r message=FALSE, warning=FALSE}
 country_state %>% 
   group_by(state) %>% 
   dplyr::summarise(n = n()) %>% 
