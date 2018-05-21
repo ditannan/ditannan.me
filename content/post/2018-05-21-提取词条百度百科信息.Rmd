@@ -40,17 +40,14 @@ country
 一开始是想着查维基百科的结果，从中提取对应的洲，毕竟维基百科有对应的API可以调用，结果发现呢，维基百科里面居然没有可以直接挑出来所在洲的值，大家可自行查看，比如[阿富汗](https://www.wikiwand.com/zh-hans/%E9%98%BF%E5%AF%8C%E6%B1%97)，国家所在的洲信息在正文里面，这样提取似乎有些困难，不过可以试试正则表达式：".洲"也许可以提炼出来。
 
 然后我就转向百度百科了，百度百科还是可以的，信息如下：
-```{r echo=FALSE}
-knitr::include_graphics('../../public/baidubaike-sample.jpg')
-```
+![](https://raw.githubusercontent.com/ditannan/ditannan.me/master/static/baidubaike-sample.jpg)
 
 
 那接下来就只要正确的读取这个值所在的位置就可以了，这里我们使用[Hadley](http://hadley.nz/index.html)大神的[`rvest`](https://github.com/hadley/rvest)包。
 
 我们先找到网页中对应的位置，如下所示：
-```{r echo=FALSE}
-knitr::include_graphics('../../public/html-sample.jpg')
-```
+![](https://raw.githubusercontent.com/ditannan/ditannan.me/master/static/html-sample.jpg)
+
 
 可以看到这些是一个个“键值对”组成，对应的标签为`dd`，所以可以通过`dd.basicInfo-item value`进行提取。可我们仔细观察发现洲并没有专属的`class`，其他的值对应的也是这个类，这样看似无法直接提取对应的洲，但实际上反而方便了其他信息一起提取。我们就可以把截图中的所有的基本信息一起提取，只要我们再把前面的“键”标签找到，可以看到是`dt.basicInfo-item name`。
 

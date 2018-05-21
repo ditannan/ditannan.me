@@ -50,9 +50,9 @@ description: ''
 <div class="section level1">
 <h1>发展</h1>
 <p>一开始是想着查维基百科的结果，从中提取对应的洲，毕竟维基百科有对应的API可以调用，结果发现呢，维基百科里面居然没有可以直接挑出来所在洲的值，大家可自行查看，比如<a href="https://www.wikiwand.com/zh-hans/%E9%98%BF%E5%AF%8C%E6%B1%97">阿富汗</a>，国家所在的洲信息在正文里面，这样提取似乎有些困难，不过可以试试正则表达式：“.洲”也许可以提炼出来。</p>
-<p>然后我就转向百度百科了，百度百科还是可以的，信息如下： <img src="../../public/baidubaike-sample.jpg" /><!-- --></p>
+<p>然后我就转向百度百科了，百度百科还是可以的，信息如下： <img src="https://raw.githubusercontent.com/ditannan/ditannan.me/master/static/baidubaike-sample.jpg" /></p>
 <p>那接下来就只要正确的读取这个值所在的位置就可以了，这里我们使用<a href="http://hadley.nz/index.html">Hadley</a>大神的<a href="https://github.com/hadley/rvest"><code>rvest</code></a>包。</p>
-<p>我们先找到网页中对应的位置，如下所示： <img src="../../public/html-sample.jpg" /><!-- --></p>
+<p>我们先找到网页中对应的位置，如下所示： <img src="https://raw.githubusercontent.com/ditannan/ditannan.me/master/static/html-sample.jpg" /></p>
 <p>可以看到这些是一个个“键值对”组成，对应的标签为<code>dd</code>，所以可以通过<code>dd.basicInfo-item value</code>进行提取。可我们仔细观察发现洲并没有专属的<code>class</code>，其他的值对应的也是这个类，这样看似无法直接提取对应的洲，但实际上反而方便了其他信息一起提取。我们就可以把截图中的所有的基本信息一起提取，只要我们再把前面的“键”标签找到，可以看到是<code>dt.basicInfo-item name</code>。</p>
 </div>
 <div class="section level1">
@@ -122,7 +122,7 @@ table(country_state$state)</code></pre>
   ggplot(aes(state, n, fill = state)) +
   geom_bar(stat = &#39;identity&#39;) +
   scale_fill_jama()</code></pre>
-<p><img src="2018-05-21-%E6%8F%90%E5%8F%96%E8%AF%8D%E6%9D%A1%E7%99%BE%E5%BA%A6%E7%99%BE%E7%A7%91%E4%BF%A1%E6%81%AF_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="2018-05-21-%E6%8F%90%E5%8F%96%E8%AF%8D%E6%9D%A1%E7%99%BE%E5%BA%A6%E7%99%BE%E7%A7%91%E4%BF%A1%E6%81%AF_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 <div class="section level1">
 <h1>收工</h1>
