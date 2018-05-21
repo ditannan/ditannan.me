@@ -1,0 +1,150 @@
+---
+title: Ifelse踩过的坑
+author: Delta
+date: '2018-04-25'
+categories:
+  - R
+tags:
+  - R
+  - R tips
+slug: ifelse()踩过的坑
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(comment = '#>')
+```
+
+
+# 序
+关于R里面的条件判断，其中有个是这样的：
+```{r}
+a <- 18
+if (a < 10) {
+  print('a小于10')
+} else if (a < 20) {
+  print('a大于等于10小于20')
+} else {
+  print('a大于20')
+}
+```
+
+这里可以进行多个条件进行判断，还可以通过`ifelse()`函数实现：
+
+> # ifelse(test, yes, no)
+ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.
+
+```{r}
+ifelse(10 <= a & a < 20, 'a大于等于10小于20', '其他')
+```
+
+其实`ifelse()`也可以进行多个条件进行判断，我们把它叫做“nested ifelse()”，就是`ifelse()`里面可以嵌套`ifelse()`，可以嵌套在"yes"里面，也可以嵌套在"no"里面。所以上面的可以写成这样：
+```{r}
+ifelse(a < 10, 'a小于10', 
+       ifelse(a < 20, 'a大于等于10小于20',
+              'a大于20')
+)
+```
+
+序说的有点长，我们进入正题，如果是对数据框的一列进行判断，是不是可以用上面的呢？
+
+# 开工
+我们以一列为例，新建一个向量a，我们要做的是根据a的不同值生成b，a如下，想要得到的是：如果a长度为4，则b为'four'，如果a长度为6，则b为'six'，如果a长度为8，则b为'eight'。我们先试下下面的：
+
+```{r}
+a <- c('2018', '201809', '20180912', '22', '(空)')
+```
+
+```{r}
+if (nchar(a) == 4) {
+  b <- 'four'
+} else if (nchar(a) == 6) {
+  b <- 'six'
+} else {
+  b <- a
+}
+b
+```
+
+
+看来并没有成功，那为什么会这样呢，我们只要把我们的条件输出来看下：
+```{r}
+nchar(a) == 4
+```
+可以看到R中的比较是向量化的，就是后面的4长度不够会补齐，这样第一个条件就是上面的一个TRUE和4个FALSE，其实我们想要做的是a中的每个元素都进行一次比较再计算。这点跟SAS中是不一样的，SAS中data步对数据的操作是一行一行进行的，所以用上面的逻辑可以做到。
+
+而R中的`ifelse()`函数则可以完成，如下：
+```{r}
+b <- ifelse(nchar(a) == 8, b <- 'eight', 
+            ifelse(nchar(a) == 6, b <- 'six', 
+                   ifelse(nchar(a) == 4, b <- 'four',
+                          b <- a)))
+b
+```
+
+这里的逻辑应该是和SAS中一样。其实到这问题就解决了，但此时看下我们的题目，不是说`ifesle()`踩过的坑么，坑呢？？？
+
+# 高潮
+好吧，高潮来了，下面是我踩过的`ifelse()`的坑：
+刚刚是新生成一个向量b，如果我们直接对a进行更改，是否可行呢？我们将a复制一下给c，用c进行试验：
+```{r}
+a <- c('2018', '201809', '20180912', '22', '(空)')
+c <- a
+c <- ifelse(nchar(c) == 8, c <- 'eight', 
+            ifelse(nchar(c) == 6, c <- 'six', 
+                   ifelse(nchar(c) == 4, c <- 'four',
+                          c <- c)))
+c
+```
+
+what?为什么会这样？这里我们从开始看，如果字符串长度为8，那么c赋值为'eight'，然后进行下面的，我们发现最后结果都是'eight'，是因为进行第一步后，c变成了'eight'，这样接下来两个判断跳过，直接执行后面的`c <- c`了，所以就都是'eight'，我们可以通过下面的代码验证一下：
+```{r}
+a <- c('2018', '201809', '20180912', '22', '(空)')
+c <- a
+c <- ifelse(nchar(c) == 8, c <- 'eight', 
+            ifelse(nchar(c) == 6, c <- 'six', 
+                   ifelse(nchar(c) == 4, c <- 'four',
+                          c <- 'last')))
+c
+```
+
+当我把最后改成'last'时，可以看到输出的结果除了长度对应为8的再第一步时为'eight'后，其他的都只执行了最后的`c <- 'last'`。刚说到第一步判断后，c的值为'eight'了，这样最后的`c <- c`将向量中的c都转化为了函数里面的c变量，及'eight'。我们还可以通过另外一个方式验证一下
+
+```{r}
+a <- c('2018', '201809', '20180912', '22', '(空)')
+c <- a
+c <- ifelse(nchar(c) == 8, c <- 'eight', 
+            ifelse(nchar(c) == 6, c <- 'six', 
+                   ifelse(nchar(c) == 5, c <- 'four',
+                          c <- 'last')))
+c
+```
+
+我将长度为4的判断改成了5，这时候结果就又变了，是因为进行第一步长度为8判断后，函数里面c变量为'eight'，其长度为5，这样就执行了后面的`c <- 'four'`再后面的也跳过了，所以才有所得到的结果。
+
+再看下面的，我把最后的一步改成了a结果又变了：
+```{r}
+a <- c('2018', '201809', '20180912', '22', '(空)')
+c <- a
+c <- ifelse(nchar(c) == 8, c <- 'eight', 
+            ifelse(nchar(c) == 6, c <- 'six', 
+                   ifelse(nchar(c) == 4, c <- 'four',
+                          c <- a)))
+c
+```
+这里跟第一种情况类似，只是这里最后执行的是`c <- a`，但这里让我好奇的一点是为啥是'2018'呢，感觉是用的a的第一个值，我们验证一下，将a里面值得顺序变一下
+
+```{r}
+a <- c('(空)', '2018', '201809', '20180912', '22')
+c <- a
+c <- ifelse(nchar(c) == 8, c <- 'eight', 
+            ifelse(nchar(c) == 6, c <- 'six', 
+                   ifelse(nchar(c) == 4, c <- 'four',
+                          c <- a)))
+c
+```
+
+可以看到结果真的变了，和预期的一样，那么为什么会这样呢？先留着这个问题吧？
+
+# 收工
+Peace out~
+
