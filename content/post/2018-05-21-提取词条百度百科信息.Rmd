@@ -15,10 +15,8 @@ description: ''
 ```{r loading-packages, warning=FALSE, message=FALSE, include=FALSE}
 library(plyr)
 library(tidyverse)
-library(rvest)
 library(ggsci)
 knitr::opts_chunk$set(comment = '#>')
-Sys.setlocale('LC_ALL','C')
 ```
 
 # 序
@@ -59,6 +57,7 @@ knitr::include_graphics('../../static/html-sample.jpg')
 # 高潮
 我们先对一个国家进行提取，一个搞定后，再多的也就只是交给机器来实现了。我们定义一个提取的函数吧：
 ```{r message=FALSE, warning=FALSE}
+library(rvest)
 get_baike <- function(name) {
   # 获取对应百度百科网址
   url <- paste0('https://baike.baidu.com/item/', name)

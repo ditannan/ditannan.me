@@ -5,11 +5,130 @@ date: '2018-05-21'
 slug: 提取词条百度百科信息
 categories:
   - R
+  - 爬虫
 tags:
+  - 爬虫
   - HTML
 description: ''
 ---
 
 
 
-
+<div class="section level1">
+<h1>序</h1>
+<p>最近女票发愁，马上要开组会了，没啥汇报怎么办，于是来求救于看上去无所不能的男票，对，就是我！她的初步要求很简单，就是给她分析数据，其中有一个小问题是这样的，她收集了几千位对象的国籍，国籍呢是遍布全球各个国家，她想有个图描述下这个国籍的变量。</p>
+</div>
+<div class="section level1">
+<h1>开工</h1>
+<p>先感受下这个国籍的变量到底有哪些，看看里面的组成，这里选取了如下国家：</p>
+<pre><code>#&gt; Parsed with column specification:
+#&gt; cols(
+#&gt;   X1 = col_character()
+#&gt; )</code></pre>
+<pre class="r"><code>country</code></pre>
+<pre><code>#&gt;  [1] &quot;阿尔及利亚&quot;   &quot;阿富汗&quot;       &quot;阿根廷&quot;       &quot;阿曼苏丹国&quot;  
+#&gt;  [5] &quot;埃及&quot;         &quot;埃塞俄比亚&quot;   &quot;爱尔兰&quot;       &quot;安哥拉&quot;      
+#&gt;  [9] &quot;奥地利&quot;       &quot;澳大利亚&quot;     &quot;巴基斯坦&quot;     &quot;巴西&quot;        
+#&gt; [13] &quot;白俄罗斯&quot;     &quot;比利时&quot;       &quot;波兰&quot;         &quot;玻利维亚&quot;    
+#&gt; [17] &quot;博茨瓦纳&quot;     &quot;布基纳法索&quot;   &quot;德国&quot;         &quot;多哥&quot;        
+#&gt; [21] &quot;俄罗斯&quot;       &quot;厄立特里亚&quot;   &quot;法国&quot;         &quot;非洲&quot;        
+#&gt; [25] &quot;菲律宾&quot;       &quot;冈比亚&quot;       &quot;刚果&quot;         &quot;刚果金&quot;      
+#&gt; [29] &quot;哥伦比亚&quot;     &quot;荷兰&quot;         &quot;几内亚&quot;       &quot;加拿大&quot;      
+#&gt; [33] &quot;加纳共和国&quot;   &quot;柬埔寨&quot;       &quot;喀麦隆&quot;       &quot;卡塔尔&quot;      
+#&gt; [37] &quot;科摩罗&quot;       &quot;科特迪瓦&quot;     &quot;肯尼亚&quot;       &quot;老挝&quot;        
+#&gt; [41] &quot;黎巴嫩&quot;       &quot;利比里亚&quot;     &quot;利比亚&quot;       &quot;卢旺达&quot;      
+#&gt; [45] &quot;马达加斯加&quot;   &quot;马拉维共和国&quot; &quot;马来西亚&quot;     &quot;马里共和国&quot;  
+#&gt; [49] &quot;毛里求斯&quot;     &quot;美国&quot;         &quot;孟加拉国&quot;     &quot;缅甸&quot;        
+#&gt; [53] &quot;摩洛哥&quot;       &quot;莫桑比克&quot;     &quot;墨西哥&quot;       &quot;纳米比亚&quot;    
+#&gt; [57] &quot;南非&quot;         &quot;尼泊尔&quot;       &quot;尼日尔共和国&quot; &quot;尼日利亚&quot;    
+#&gt; [61] &quot;葡萄牙&quot;       &quot;日本&quot;         &quot;瑞典&quot;         &quot;塞拉利昂&quot;    
+#&gt; [65] &quot;塞内加尔&quot;     &quot;沙特阿拉伯&quot;   &quot;斯里兰卡&quot;     &quot;苏丹&quot;        
+#&gt; [69] &quot;苏里南&quot;       &quot;泰国&quot;         &quot;坦桑尼亚&quot;     &quot;突尼斯&quot;      
+#&gt; [73] &quot;土耳其&quot;       &quot;瓦努阿图&quot;     &quot;委内瑞拉&quot;     &quot;乌干达&quot;      
+#&gt; [77] &quot;乌克兰&quot;       &quot;乌兹别克斯坦&quot; &quot;西非共同体&quot;   &quot;新加坡&quot;      
+#&gt; [81] &quot;新西兰&quot;       &quot;牙买加&quot;       &quot;也门&quot;         &quot;伊朗&quot;        
+#&gt; [85] &quot;意大利&quot;       &quot;印度&quot;         &quot;印度尼西亚&quot;   &quot;英国&quot;        
+#&gt; [89] &quot;越南&quot;         &quot;赞比亚&quot;       &quot;智利&quot;         &quot;中国&quot;</code></pre>
+<p>对于这个我们要怎么描述它呢，我们可以按照不同地区划分，开始想到的是按照所在洲划分把，好像这种方式比较简单hhh毕竟女票给的时间只有一个下午，就挑个简单点的方式吧。</p>
+</div>
+<div class="section level1">
+<h1>发展</h1>
+<p>一开始是想着查维基百科的结果，从中提取对应的洲，毕竟维基百科有对应的API可以调用，结果发现呢，维基百科里面居然没有可以直接挑出来所在洲的值，大家可自行查看，比如<a href="https://www.wikiwand.com/zh-hans/%E9%98%BF%E5%AF%8C%E6%B1%97">阿富汗</a>，国家所在的洲信息在正文里面，这样提取似乎有些困难，不过可以试试正则表达式：“.洲”也许可以提炼出来。</p>
+<p>然后我就转向百度百科了，百度百科还是可以的，信息如下： <img src="../../static/baidubaike-sample.jpg" /><!-- --></p>
+<p>那接下来就只要正确的读取这个值所在的位置就可以了，这里我们使用<a href="http://hadley.nz/index.html">Hadley</a>大神的<a href="https://github.com/hadley/rvest"><code>rvest</code></a>包。</p>
+<p>我们先找到网页中对应的位置，如下所示： <img src="../../static/html-sample.jpg" /><!-- --></p>
+<p>可以看到这些是一个个“键值对”组成，对应的标签为<code>dd</code>，所以可以通过<code>dd.basicInfo-item value</code>进行提取。可我们仔细观察发现洲并没有专属的<code>class</code>，其他的值对应的也是这个类，这样看似无法直接提取对应的洲，但实际上反而方便了其他信息一起提取。我们就可以把截图中的所有的基本信息一起提取，只要我们再把前面的“键”标签找到，可以看到是<code>dt.basicInfo-item name</code>。</p>
+</div>
+<div class="section level1">
+<h1>高潮</h1>
+<p>我们先对一个国家进行提取，一个搞定后，再多的也就只是交给机器来实现了。我们定义一个提取的函数吧：</p>
+<pre class="r"><code>library(rvest)
+get_baike &lt;- function(name) {
+  # 获取对应百度百科网址
+  url &lt;- paste0(&#39;https://baike.baidu.com/item/&#39;, name)
+  # 读取网址内容
+  page &lt;- read_html(url)
+  # 获取“键”
+  key &lt;- page %&gt;% 
+    html_nodes(&#39;dt.basicInfo-item.name&#39;) %&gt;% 
+    html_text(trim = TRUE)
+  # 获取“值”
+  value &lt;- page %&gt;% 
+    html_nodes(&#39;dd.basicInfo-item.value&#39;) %&gt;% 
+    html_text(trim = TRUE)
+  # 键值进行组合吧
+  names(value) &lt;- key
+  # 返回对应的向量
+  return(value)
+}</code></pre>
+<p>我们看看获取“阿富汗”信息：</p>
+<pre class="r"><code>afuhan &lt;- get_baike(&#39;阿富汗&#39;)
+afuhan[1 : 8]</code></pre>
+<pre><code>#&gt;                                   中文名称 
+#&gt;              &quot;阿富汗斯坦伊斯兰共和国\n[1]&quot; 
+#&gt;                                   英文名称 
+#&gt; &quot;The Islamic Republic of Afghanistan\n[1]&quot; 
+#&gt;                                   简    称 
+#&gt;                       &quot;阿富汗、阿富汗斯坦&quot; 
+#&gt;                                     所属洲 
+#&gt;                                     &quot;亚洲&quot; 
+#&gt;                                   首    都 
+#&gt;                              &quot;喀布尔\n[1]&quot; 
+#&gt;                                   主要城市 
+#&gt;                         &quot;坎大哈、赫拉特等&quot; 
+#&gt;                                     国庆日 
+#&gt;                                  &quot;8月19日&quot; 
+#&gt;                                   国    歌 
+#&gt;                 &quot;《Milli Surood》普什图语&quot;</code></pre>
+<p>基本就大功告成了，我们要获取洲也只要在结果中提取下洲就是了。</p>
+<pre class="r"><code>afuhan[&#39;所属洲&#39;]</code></pre>
+<pre><code>#&gt; 所属洲 
+#&gt; &quot;亚洲&quot;</code></pre>
+<p>我们再提取上述所有国家的洲：</p>
+<pre class="r"><code>country_baike &lt;- map(country, get_baike)
+names(country_baike) &lt;- country</code></pre>
+<p>这里面得到的就是上述所有国家的百度百科情况，接下来提取下他们的洲吧：</p>
+<pre class="r"><code>country_state &lt;- map(country, ~country_baike[[.]][&#39;所属洲&#39;])
+country_state &lt;- country_state %&gt;% 
+  unlist %&gt;% 
+  enframe(name = &#39;country&#39;, value = &#39;state&#39;)
+table(country_state$state)</code></pre>
+<pre><code>#&gt; 
+#&gt; 北美洲 大洋洲   非洲 南美洲   欧洲   亚洲 
+#&gt;      4      3     37      7     14     25</code></pre>
+</div>
+<div class="section level1">
+<h1>收尾</h1>
+<p>下面就简单的画个图吧，收个尾：</p>
+<pre class="r"><code>country_state %&gt;% 
+  group_by(state) %&gt;% 
+  dplyr::summarise(n = n()) %&gt;% 
+  ggplot(aes(state, n, fill = state)) +
+  geom_bar(stat = &#39;identity&#39;) +
+  scale_fill_jama()</code></pre>
+<p><img src="2018-05-21-%E6%8F%90%E5%8F%96%E8%AF%8D%E6%9D%A1%E7%99%BE%E5%BA%A6%E7%99%BE%E7%A7%91%E4%BF%A1%E6%81%AF_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div class="section level1">
+<h1>收工</h1>
+<p>Peace out~</p>
+</div>
