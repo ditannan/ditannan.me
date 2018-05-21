@@ -1,0 +1,123 @@
+---
+title: 提取词条百度百科信息
+author: Delta
+date: '2018-05-21'
+slug: 提取词条百度百科信息
+categories:
+  - R
+  - 爬虫
+tags:
+  - 爬虫
+  - HTML
+description: ''
+---
+
+```{r loading-packages, warning=FALSE, message=FALSE, include=FALSE}
+library(plyr)
+library(tidyverse)
+library(rvest)
+library(ggsci)
+knitr::opts_chunk$set(comment = '#>')
+Sys.setlocale('LC_ALL','C')
+```
+
+# 序
+最近女票发愁，马上要开组会了，没啥汇报怎么办，于是来求救于看上去无所不能的男票，对，就是我！她的初步要求很简单，就是给她分析数据，其中有一个小问题是这样的，她收集了几千位对象的国籍，国籍呢是遍布全球各个国家，她想有个图描述下这个国籍的变量。
+
+# 开工
+先感受下这个国籍的变量到底有哪些，看看里面的组成，这里选取了如下国家：
+```{r echo=FALSE}
+df <- read_csv('../../static/country.csv', locale = locale(encoding = 'GB18030'), col_names = FALSE)
+country <- df$X1
+```
+
+```{r}
+country
+```
+
+
+对于这个我们要怎么描述它呢，我们可以按照不同地区划分，开始想到的是按照所在洲划分把，好像这种方式比较简单hhh毕竟女票给的时间只有一个下午，就挑个简单点的方式吧。
+
+# 发展
+一开始是想着查维基百科的结果，从中提取对应的洲，毕竟维基百科有对应的API可以调用，结果发现呢，维基百科里面居然没有可以直接挑出来所在洲的值，大家可自行查看，比如[阿富汗](https://www.wikiwand.com/zh-hans/%E9%98%BF%E5%AF%8C%E6%B1%97)，国家所在的洲信息在正文里面，这样提取似乎有些困难，不过可以试试正则表达式：".洲"也许可以提炼出来。
+
+然后我就转向百度百科了，百度百科还是可以的，信息如下：
+```{r echo=FALSE}
+knitr::include_graphics('../../static/baidubaike-sample.jpg')
+```
+
+
+那接下来就只要正确的读取这个值所在的位置就可以了，这里我们使用[Hadley](http://hadley.nz/index.html)大神的[`rvest`](https://github.com/hadley/rvest)包。
+
+我们先找到网页中对应的位置，如下所示：
+```{r echo=FALSE}
+knitr::include_graphics('../../static/html-sample.jpg')
+```
+
+可以看到这些是一个个“键值对”组成，对应的标签为`dd`，所以可以通过`dd.basicInfo-item value`进行提取。可我们仔细观察发现洲并没有专属的`class`，其他的值对应的也是这个类，这样看似无法直接提取对应的洲，但实际上反而方便了其他信息一起提取。我们就可以把截图中的所有的基本信息一起提取，只要我们再把前面的“键”标签找到，可以看到是`dt.basicInfo-item name`。
+
+# 高潮
+我们先对一个国家进行提取，一个搞定后，再多的也就只是交给机器来实现了。我们定义一个提取的函数吧：
+```{r message=FALSE, warning=FALSE}
+get_baike <- function(name) {
+  # 获取对应百度百科网址
+  url <- paste0('https://baike.baidu.com/item/', name)
+  # 读取网址内容
+  page <- read_html(url)
+  # 获取“键”
+  key <- page %>% 
+    html_nodes('dt.basicInfo-item.name') %>% 
+    html_text(trim = TRUE)
+  # 获取“值”
+  value <- page %>% 
+    html_nodes('dd.basicInfo-item.value') %>% 
+    html_text(trim = TRUE)
+  # 键值进行组合吧
+  names(value) <- key
+  # 返回对应的向量
+  return(value)
+}
+```
+
+
+我们看看获取“阿富汗”信息：
+```{r}
+afuhan <- get_baike('阿富汗')
+afuhan[1 : 8]
+```
+
+
+基本就大功告成了，我们要获取洲也只要在结果中提取下洲就是了。
+```{r}
+afuhan['所属洲']
+```
+
+我们再提取上述所有国家的洲：
+```{r}
+country_baike <- map(country, get_baike)
+names(country_baike) <- country
+```
+
+这里面得到的就是上述所有国家的百度百科情况，接下来提取下他们的洲吧：
+
+```{r}
+country_state <- map(country, ~country_baike[[.]]['所属洲'])
+country_state <- country_state %>% 
+  unlist %>% 
+  enframe(name = 'country', value = 'state')
+table(country_state$state)
+```
+
+# 收尾
+下面就简单的画个图吧，收个尾：
+```{r}
+country_state %>% 
+  group_by(state) %>% 
+  dplyr::summarise(n = n()) %>% 
+  ggplot(aes(state, n, fill = state)) +
+  geom_bar(stat = 'identity') +
+  scale_fill_jama()
+```
+
+# 收工
+Peace out~
