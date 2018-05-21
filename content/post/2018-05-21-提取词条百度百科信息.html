@@ -120,6 +120,9 @@ table(country_state$state)</code></pre>
 <div class="section level1">
 <h1>收尾</h1>
 <p>下面就简单的画个图吧，收个尾：</p>
+<pre class="r"><code>detach(&quot;package:rvest&quot;, unload=TRUE)</code></pre>
+<pre><code>#&gt; Warning: 无法卸下&#39;rvest&#39;这个名字空间：
+#&gt;   名字空间&#39;rvest&#39;是由&#39;tidyverse&#39;引进的，因此无法将之卸下</code></pre>
 <pre class="r"><code>country_state %&gt;% 
   group_by(state) %&gt;% 
   dplyr::summarise(n = n()) %&gt;% 

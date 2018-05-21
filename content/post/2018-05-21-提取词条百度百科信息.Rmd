@@ -110,6 +110,7 @@ table(country_state$state)
 # 收尾
 下面就简单的画个图吧，收个尾：
 ```{r}
+detach("package:rvest", unload=TRUE)
 country_state %>% 
   group_by(state) %>% 
   dplyr::summarise(n = n()) %>% 
