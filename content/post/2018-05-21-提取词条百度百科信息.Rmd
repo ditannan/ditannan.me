@@ -108,10 +108,13 @@ table(country_state$state)
 下面就简单的画个图吧，收个尾：
 ```{r message=FALSE, warning=FALSE}
 country_state %>% 
+  filter(!is.na(state)) %>% 
   group_by(state) %>% 
   dplyr::summarise(n = n()) %>% 
   ggplot(aes(state, n, fill = state)) +
-  geom_bar(stat = 'identity') +
+  geom_bar(stat = 'identity', na.rm = TRUE) +
+  geom_text(aes(label = n), vjust = -.2) +
+  scale_x_discrete(limits = c('大洋洲', '北美洲', '南美洲', '欧洲', '亚洲', '非洲')) +
   scale_fill_jama()
 ```
 
