@@ -115,6 +115,7 @@ country_state %>%
   geom_bar(stat = 'identity', na.rm = TRUE) +
   geom_text(aes(label = n), vjust = -.2) +
   scale_x_discrete(limits = c('大洋洲', '北美洲', '南美洲', '欧洲', '亚洲', '非洲')) +
+  theme(text = element_text(family = 'STHeiti')) +
   scale_fill_jama()
 ```
 
