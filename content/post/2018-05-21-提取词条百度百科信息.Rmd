@@ -106,7 +106,7 @@ table(country_state$state)
 
 # 收尾
 下面就简单的画个图吧，收个尾：
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 country_state %>% 
   filter(!is.na(state)) %>% 
   group_by(state) %>% 
@@ -118,6 +118,7 @@ country_state %>%
   theme(text = element_text(family = 'STHeiti')) +
   scale_fill_jama()
 ```
+![](https://i.imgur.com/xSyBTTx.jpg)
 
 # 收工
 Peace out~

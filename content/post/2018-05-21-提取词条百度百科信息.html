@@ -116,17 +116,10 @@ table(country_state$state)</code></pre>
 <div class="section level1">
 <h1>收尾</h1>
 <p>下面就简单的画个图吧，收个尾：</p>
-<pre class="r"><code>country_state %&gt;% 
-  filter(!is.na(state)) %&gt;% 
-  group_by(state) %&gt;% 
-  dplyr::summarise(n = n()) %&gt;% 
-  ggplot(aes(state, n, fill = state)) +
-  geom_bar(stat = &#39;identity&#39;, na.rm = TRUE) +
-  geom_text(aes(label = n), vjust = -.2) +
-  scale_x_discrete(limits = c(&#39;大洋洲&#39;, &#39;北美洲&#39;, &#39;南美洲&#39;, &#39;欧洲&#39;, &#39;亚洲&#39;, &#39;非洲&#39;)) +
-  theme(text = element_text(family = &#39;STHeiti&#39;)) +
-  scale_fill_jama()</code></pre>
-<p><img src="2018-05-21-%E6%8F%90%E5%8F%96%E8%AF%8D%E6%9D%A1%E7%99%BE%E5%BA%A6%E7%99%BE%E7%A7%91%E4%BF%A1%E6%81%AF_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<div class="figure">
+<img src="https://i.imgur.com/xSyBTTx.jpg" />
+
+</div>
 </div>
 <div class="section level1">
 <h1>收工</h1>
